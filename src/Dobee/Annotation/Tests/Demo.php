@@ -14,6 +14,7 @@ class Demo
 {
     /**
      * @Route("/")
+     * @Route(name="abc")
      * @Method("POST")
      */
     public function demoAction()

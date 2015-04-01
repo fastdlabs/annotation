@@ -13,6 +13,11 @@
 
 namespace Dobee\Annotation;
 
+/**
+ * Class ClassParser
+ *
+ * @package Dobee\Annotation
+ */
 class ClassParser
 {
     /**

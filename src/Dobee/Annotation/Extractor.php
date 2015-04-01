@@ -13,24 +13,46 @@
 
 namespace Dobee\Annotation;
 
+/**
+ * Class Extractor
+ *
+ * @package Dobee\Annotation
+ */
 class Extractor extends \ReflectionClass
 {
+    /**
+     * @var array
+     */
     private $methodsAnnotation;
 
-    public function extractorAnnotation()
+    /**
+     * @var string
+     */
+    private $separator = '@';
+
+    /**
+     * @return array
+     */
+    public function getAnnotation()
     {
         return array(
-            'class'     => $this->extractClassAnnotation(),
-            'methods'   => $this->extractMethodsAnnotation(),
+            'class'     => $this->getClassAnnotation(),
+            'methods'   => $this->getMethodsAnnotation(),
         );
     }
 
-    public function extractClassAnnotation()
+    /**
+     * @return string
+     */
+    public function getClassAnnotation()
     {
         return $this->getDocComment();
     }
 
-    public function extractMethodsAnnotation()
+    /**
+     * @return array
+     */
+    public function getMethodsAnnotation()
     {
         if (null === $this->methodsAnnotation) {
             foreach ($this->getMethods() as $method) {
@@ -41,8 +63,55 @@ class Extractor extends \ReflectionClass
         return $this->methodsAnnotation;
     }
 
-    public function extractMethodAnnotation($method)
+    /**
+     * @param $method
+     * @return string
+     */
+    public function getMethodAnnotation($method)
     {
-        return $this->methodsAnnotation[$method];
+        return $this->getMethodsAnnotation()[$method];
+    }
+
+    /**
+     * @param $annotation
+     * @param $keyword
+     * @return array
+     */
+    public function getParameters($annotation, $keyword)
+    {
+        if (!$this->hasKeyword($annotation, $keyword)) {
+            return array();
+        }
+
+        $pattern = sprintf('/\%s%s\((?P<params>.*?)\)/', $this->separator, $keyword);
+
+        $parameters = array();
+
+        if (preg_match_all($pattern, str_replace(array("\r\n", "\n", '*'), '', $annotation), $match)) {
+
+            foreach ($match['params'] as $key => $value) {
+                if (false !== strpos($value, '=')) {
+                    list($key, $value) = explode('=', $value);
+                    if (false !== ($json = json_decode($value, true))) {
+                        $value = $json;
+                        unset($json);
+                    }
+                }
+
+                $parameters[$key] = trim($value, '"');
+            }
+        }
+
+        return $parameters;
+    }
+
+    /**
+     * @param $annotation
+     * @param $keyword
+     * @return bool
+     */
+    public function hasKeyword($annotation, $keyword)
+    {
+        return false !== strpos($annotation, $keyword);
     }
 }

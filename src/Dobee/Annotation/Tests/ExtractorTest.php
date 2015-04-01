@@ -24,6 +24,14 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
     public function testAnnotationOne()
     {
-        echo ClassParser::getExtractor('\Demo')->extractClassAnnotation('demoAction');
+        $annotationExtractor = ClassParser::getExtractor('\Demo');
+
+        $annotation = $annotationExtractor->getMethodAnnotation('demoAction');
+
+        $parameters = $annotationExtractor->getParameters($annotation, 'Route');
+
+        $this->assertEquals(array('/', 'name' => 'abc'), $parameters);
+
+        $this->assertEquals(array('POST'), $annotationExtractor->getParameters($annotation, 'Method'));
     }
 }
