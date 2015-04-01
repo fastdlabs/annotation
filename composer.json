@@ -1,0 +1,21 @@
+{
+    "name": "dobee/annotation",
+    "description": "dobee php simple framework Annotation Component",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "janhuang",
+            "email": "bboyjanhuang@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4",
+        "phpunit/phpunit": "4.5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dobee\\": "src/Dobee"
+        }
+    }
+}
