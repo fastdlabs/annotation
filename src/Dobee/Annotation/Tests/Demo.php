@@ -20,8 +20,10 @@ class Demo
     {}
 
     /**
-     * @Route("/{name}", name="abc", defaults={"name": "jan"}, method=["POST"], format=["json", "php", "xml"])
+     * @Route("/{name}", name="abc", defaults={"name": "jan"}, format=["json", "php", "xml"])
+     * @Route(requirements={"name":"\w+"}, method=["POST", "GET"])
      */
     public function demoAction2()
     {}
+
 }
