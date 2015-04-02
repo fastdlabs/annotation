@@ -19,9 +19,12 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        include __DIR__ . '/Demo.php';
-    }
+        if (!class_exists('\\Demo')) {
+            include __DIR__ . '/Demo.php';
+        }
 
+    }
+    
     public function testAnnotationOne()
     {
         $annotationExtractor = ClassParser::getExtractor('\Demo');
@@ -30,8 +33,44 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
         $parameters = $annotationExtractor->getParameters($annotation, 'Route');
 
-        $this->assertEquals(array('/', 'name' => 'abc'), $parameters);
+        $this->assertEquals(
+            array(
+                '/{name}',
+                'name' => 'abc',
+                'defaults' => array(
+                    'name' => 'jan'
+                ),
+                'method' => array(
+                    'POST'
+                )
+            ),
+            $parameters
+        );
 
-        $this->assertEquals(array('POST'), $annotationExtractor->getParameters($annotation, 'Method'));
+        $annotation = $annotationExtractor->getMethodAnnotation('demoAction2');
+
+        /**
+         * @Route("/{name}", name="abc", defaults={"name": "jan"}, method=["POST"], format=["json", "php", "xml"])
+         */
+
+        $parameters = $annotationExtractor->getParameters($annotation, 'Route');
+
+        $this->assertEquals(
+            array(
+                '/{name}',
+                'name' => 'abc',
+                'defaults' => array(
+                        'name' => 'jan'
+                    ),
+                'method' => array(
+                    'POST'
+                    ),
+                'format' => array(
+                    'json', 'php', 'xml',
+                )
+                ),
+
+            $annotationExtractor->getParameters($annotation, 'Route')
+        );
     }
 }

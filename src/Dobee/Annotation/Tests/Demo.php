@@ -13,10 +13,15 @@
 class Demo 
 {
     /**
-     * @Route("/")
-     * @Route(name="abc")
-     * @Method("POST")
+     * @Route("/{name}", name="abc", defaults={"name": "jan"})
+     * @Route(method=["POST"])
      */
     public function demoAction()
+    {}
+
+    /**
+     * @Route("/{name}", name="abc", defaults={"name": "jan"}, method=["POST"], format=["json", "php", "xml"])
+     */
+    public function demoAction2()
     {}
 }

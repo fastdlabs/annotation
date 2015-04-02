@@ -89,6 +89,8 @@ class Extractor extends \ReflectionClass
 
         if (preg_match_all($pattern, str_replace(array("\r\n", "\n", '*'), '', $annotation), $match)) {
 
+            $match['params'] = preg_split('/(?<=\"|\]|\}),\s*(?=\w)/', implode(',', $match['params']));
+
             foreach ($match['params'] as $key => $value) {
                 if (false !== strpos($value, '=')) {
                     list($key, $value) = explode('=', $value);
@@ -96,9 +98,11 @@ class Extractor extends \ReflectionClass
                         $value = $json;
                         unset($json);
                     }
+                } else {
+                    $value = trim($value, '"');
                 }
 
-                $parameters[$key] = trim($value, '"');
+                $parameters[$key] = $value;
             }
         }
 
