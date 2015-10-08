@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Dobee\\": "src/Dobee"
+            "FastD\\": "src/FastD"
         }
     }
 }
