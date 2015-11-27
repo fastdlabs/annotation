@@ -1,6 +1,6 @@
 {
-    "name": "dobee/annotation",
-    "description": "dobee php simple framework Annotation Component",
+    "name": "fastd/annotation",
+    "description": "Fastd php simple framework Annotation Component",
     "license": "MIT",
     "authors": [
         {
@@ -10,12 +10,19 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.4",
-        "phpunit/phpunit": "4.5.*"
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.0"
     },
     "autoload": {
         "psr-4": {
             "FastD\\": "src/FastD"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
         }
     }
 }
