@@ -11,14 +11,14 @@
  * Gmail: bboyjanhuang@gmail.com
  */
 
-namespace Dobee\Annotation;
+namespace FastD\Annotation;
 
 /**
- * Class Extractor
+ * Class AnnotationExtractor
  *
- * @package Dobee\Annotation
+ * @package FastD\Annotation
  */
-class Extractor extends \ReflectionClass
+class AnnotationExtractor extends \ReflectionClass
 {
     /**
      * @var array
@@ -31,6 +31,8 @@ class Extractor extends \ReflectionClass
     private $separator = '@';
 
     /**
+     * Get class and method annotation.
+     *
      * @return array
      */
     public function getAnnotation()
@@ -42,6 +44,8 @@ class Extractor extends \ReflectionClass
     }
 
     /**
+     * Get class annotation.
+     *
      * @return string
      */
     public function getClassAnnotation()
@@ -117,5 +121,14 @@ class Extractor extends \ReflectionClass
     public function hasKeyword($annotation, $keyword)
     {
         return false !== strpos($annotation, $keyword);
+    }
+
+    /**
+     * @param $class
+     * @return AnnotationExtractor
+     */
+    public static function getExtractor($class)
+    {
+        return new static($class);
     }
 }

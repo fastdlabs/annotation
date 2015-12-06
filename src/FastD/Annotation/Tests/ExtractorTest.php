@@ -13,7 +13,8 @@
 
 namespace Dobee\Annotation\Tests;
 
-use Dobee\Annotation\ClassParser;
+use FastD\Annotation\AnnotationExtractor;
+use FastD\Annotation\ClassParser;
 
 class ExtractorTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +27,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     
     public function testAnnotationOne()
     {
-        $annotationExtractor = ClassParser::getExtractor('\Demo');
+        $annotationExtractor = AnnotationExtractor::getExtractor('\Demo');
 
         $annotation = $annotationExtractor->getMethodAnnotation('demoAction');
 
