@@ -1,4 +1,7 @@
 <?php
+
+namespace FastD\Annotation\Tests;
+
 /**
  * Created by PhpStorm.
  * User: janhuang

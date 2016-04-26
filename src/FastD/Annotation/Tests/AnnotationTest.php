@@ -18,16 +18,9 @@ use FastD\Annotation\Annotation;
 
 class AnnotationTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        if (!class_exists('\Demo')) {
-            include __DIR__ . '/Demo.php';
-        }
-    }
-
     public function testParse()
     {
-        $annotation = new Annotation(\Demo::class);
+        $annotation = new Annotation(Demo::class);
 
         $this->assertEquals('demoAction', $annotation->getMethods()[0]->getName());
         $this->assertEquals('demoAction2', $annotation->getMethods()[1]->getName());
