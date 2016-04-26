@@ -27,16 +27,20 @@ class AnnotationTest extends \PHPUnit_Framework_TestCase
 
     public function testParse()
     {
-        $annotation = new Annotation(null);
+        $annotation = new Annotation(\Demo::class);
 
-        $parameters = $annotation->parse('
-        /**
-         * @Route("/{name}", name="abc", defaults={"name": "jan"})
-         * @Route(method=["POST"])
-         * @Methods(["GET", "POST"])
-         */
-        ');
+        $this->assertEquals('demoAction', $annotation->getMethods()[0]->getName());
+        $this->assertEquals('demoAction2', $annotation->getMethods()[1]->getName());
 
-        print_r($parameters);
+        $this->assertEquals([
+            '/{name}',
+            'name' => 'abc',
+            'defaults' => [
+                'name' => 'jan',
+            ],
+            'method' => [
+                'POST'
+            ]
+        ], $annotation->getMethods()[0]->getParameters('Route'));
     }
 }

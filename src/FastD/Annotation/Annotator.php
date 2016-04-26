@@ -49,11 +49,20 @@ abstract class Annotator
     }
 
     /**
+     * @param string $name
      * @return array
      */
-    public function getParameters()
+    public function getParameters($name = null)
     {
-        return $this->parameters;
+        if (null === $name) {
+            return $this->parameters;
+        }
+
+        if (!isset($this->parameters)) {
+            throw new \RuntimeException(sprintf('Annotation ["%s"] is not defined.', $name));
+        }
+
+        return $this->parameters[$name];
     }
 
     /**
@@ -102,8 +111,6 @@ abstract class Annotator
                 unset($parameters);
             }
         }
-
-        $this->setParameters($params);
 
         return $params;
     }

@@ -44,16 +44,22 @@ class Annotation extends Annotator
     public function __construct($class)
     {
         if (null !== $class) {
-
-            $annotation = clone $this;
-
             $reflection = new \ReflectionClass($class);
 
             $params = $this->parse($reflection->getDocComment());
 
+            $this->setParameters($params);
+            $this->setName($reflection->getName());
+
+            $methods = [];
             foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                $this->parse($method->getDocComment());
+                $annotation = clone $this;
+                $annotation->setName($method->getName());
+                $annotation->setParent($this);
+                $annotation->setParameters($this->parse($method->getDocComment()));
+                $methods[] = $annotation;
             }
+            $this->setMethods($methods);
 
             unset($reflection, $annotation);
         }

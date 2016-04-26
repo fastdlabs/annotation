@@ -14,7 +14,16 @@
 
 namespace FastD\Annotation;
 
+/**
+ * Interface AnnotationInterface
+ *
+ * @package FastD\Annotation
+ */
 interface AnnotationInterface
 {
+    /**
+     * @param $document
+     * @return array
+     */
     public function parse($document);
 }
