@@ -1,1 +1,11 @@
-#annotation 注释解析组件
+# Annotation
+
+简单的 PHP 注解解析类
+
+## Testing
+
+```php
+phpunit
+```
+
+## License MIT

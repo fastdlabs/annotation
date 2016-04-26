@@ -11,7 +11,7 @@
         <ini name="error_reporting" value="-16385"/>
     </php>
     <testsuites>
-        <testsuite name="Fastd php simple framework Annotation Component Tests">
+        <testsuite name="FastD PHP Simple Framework Annotation Component Tests">
             <directory>./src/FastD/Annotation/Tests/</directory>
         </testsuite>
     </testsuites>

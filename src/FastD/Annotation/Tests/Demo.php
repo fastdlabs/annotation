@@ -22,6 +22,7 @@ class Demo
     /**
      * @Route("/{name}", name="abc", defaults={"name": "jan"}, format=["json", "php", "xml"])
      * @Route(requirements={"name":"\w+"}, method=["POST", "GET"])
+     * @Methods(["GET", "POST"])
      */
     public function demoAction2()
     {}
