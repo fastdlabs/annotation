@@ -58,11 +58,7 @@ abstract class Annotator
             return $this->parameters;
         }
 
-        if (!isset($this->parameters[$name])) {
-            throw new \RuntimeException(sprintf('Annotation ["%s"] is not defined.', $name));
-        }
-
-        return $this->parameters[$name];
+        return isset($this->parameters[$name]) ? $this->parameters[$name] : false;
     }
 
     /**
