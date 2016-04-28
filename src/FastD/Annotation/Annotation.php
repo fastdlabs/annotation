@@ -37,12 +37,27 @@ class Annotation extends Annotator
     protected $parent;
 
     /**
-     * Annotation constructor.
-     *
-     * @param $class
+     * @var string
      */
-    public function __construct($class)
+    protected $prefix;
+
+    /**
+     * @var string
+     */
+    protected $suffix;
+
+    /**
+     * Annotation constructor.
+     * @param $class
+     * @param null $prefix
+     * @param null $suffix
+     */
+    public function __construct($class, $prefix = null, $suffix = null)
     {
+        $this->setPrefix($prefix);
+
+        $this->setSuffix($suffix);
+
         if (null !== $class) {
             $reflection = new \ReflectionClass($class);
 
@@ -53,6 +68,14 @@ class Annotation extends Annotator
 
             $methods = [];
             foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+                if (null !== $this->getSuffix() && false === strpos($method->getName(), $this->getSuffix())) {
+                    continue;
+                }
+
+                if (null !== $this->getPrefix() && false === strpos($method->getName(), $this->getPrefix())) {
+                    continue;
+                }
+
                 $annotation = clone $this;
                 $annotation->setName($method->getName());
                 $annotation->setParent($this);
@@ -66,7 +89,7 @@ class Annotation extends Annotator
     }
 
     /**
-     * @return string
+     * @return Annotation[]
      */
     public function getMethods()
     {
@@ -116,6 +139,42 @@ class Annotation extends Annotator
     public function setParent(Annotation $parent)
     {
         $this->parent = $parent;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSuffix()
+    {
+        return $this->suffix;
+    }
+
+    /**
+     * @param string $suffix
+     * @return $this
+     */
+    public function setSuffix($suffix)
+    {
+        $this->suffix = $suffix;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * @param string $prefix
+     * @return $this
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
         return $this;
     }
 

@@ -30,4 +30,5 @@ class Demo
     public function demoAction2()
     {}
 
+    public function test(){}
 }

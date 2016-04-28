@@ -35,5 +35,16 @@ class AnnotationTest extends \PHPUnit_Framework_TestCase
                 'POST'
             ]
         ], $annotation->getMethods()[0]->getParameters('Route'));
+
+        $this->assertEquals(3, count($annotation->getMethods()));
+    }
+
+    public function testSuffix()
+    {
+        $annotation = new Annotation(Demo::class, null, 'Action');
+
+        $this->assertEquals($annotation->getSuffix(), 'Action');
+
+        $this->assertEquals(2, count($annotation->getMethods()));
     }
 }
