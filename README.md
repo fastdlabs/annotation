@@ -53,6 +53,14 @@ Array
 
 **相同注释会进行自动合并。**
 
+注释组件对象会自动解析 `public` 方法进行解析，其中可以通过 `FastD\Annotation\Annotation::__construct($class, $prefix = null, $suffix = null)` 第二、第三个参数进行对方法名前缀、后缀得控制，过滤得出指定得方法。
+
+```php
+$annotation = new Annotation(Demo::class, null, 'Action');
+```
+
+获取 `Demo::class` 对象 `Action` 结尾得所有得 `public` 方法.
+
 ## Testing
 
 ```php
