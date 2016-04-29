@@ -2,6 +2,9 @@
 
 简单的 PHP 注解解析类
 
+![Building](https://api.travis-ci.org/JanHuang/annotation.svg?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/fastd/annotation/v/stable)](https://packagist.org/packages/fastd/annotation) [![Total Downloads](https://poser.pugx.org/fastd/annotation/downloads)](https://packagist.org/packages/fastd/annotation) [![Latest Unstable Version](https://poser.pugx.org/fastd/annotation/v/unstable)](https://packagist.org/packages/fastd/annotation) [![License](https://poser.pugx.org/fastd/annotation/license)](https://packagist.org/packages/fastd/annotation)
+
 ## 要求
 
 * PHP 7+
