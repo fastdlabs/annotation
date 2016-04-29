@@ -1,0 +1,9 @@
+language: php
+php:
+- '7'
+
+install: composer install -vvv
+
+before_script:
+
+script: phpunit
