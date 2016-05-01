@@ -4,6 +4,4 @@ php:
 
 install: composer install -vvv
 
-before_script:
-
 script: phpunit
