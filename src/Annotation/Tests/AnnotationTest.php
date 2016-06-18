@@ -38,7 +38,13 @@ class TestParentExtend extends TestGrandParent
  */
 class TestParent
 {
+    /**
+     * @Route("/cover")
+     */
+    public function testCoverAction()
+    {
 
+    }
 }
 
 /**
@@ -106,6 +112,19 @@ class AnnotationTest extends \PHPUnit_Framework_TestCase
         ], $annotation->getAnnotator('testAction')->getParameters()['Route']);
     }
 
+    public function testExtendCover()
+    {
+        $annotation = new Annotation(TestExtendParent::class);
+
+        $this->assertEquals([
+            '/parent/extend/',
+            'methods' => ['get', 'post'],
+            'name' => 'test',
+        ], $annotation->getAnnotator('testAction')->getParameters()['Route']);
+
+        $this->assertEquals(1, $annotation->count());
+    }
+
     public function testMultiExtends()
     {
         $annotation = new Annotation(TestExtendGrandParent::class);
@@ -128,5 +147,10 @@ class AnnotationTest extends \PHPUnit_Framework_TestCase
             ],
             'Host' => ['::1']
         ], $annotation->getAnnotator('testAction')->getParameters());
+    }
+
+    public function testCoverExtendMethod()
+    {
+
     }
 }

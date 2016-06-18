@@ -17,13 +17,14 @@ namespace FastD\Annotation;
 use ReflectionClass;
 use ReflectionMethod;
 use Iterator;
+use Countable;
 
 /**
  * Class Annotation
  *
  * @package FastD\Annotation
  */
-class Annotation implements Iterator
+class Annotation implements Iterator, Countable
 {
     /**
      * @var int
@@ -65,9 +66,11 @@ class Annotation implements Iterator
         $parents = $this->recursiveReflectionParent($class);
 
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $annotator = new AnnotatorMethod($method);
-            $annotator = $this->merge($annotator, $parents);
-            $annotators[$annotator->getName()] = $annotator;
+            if (false !== $method->getDeclaringClass() && $method->getDeclaringClass()->getName() == $class->getName()) {
+                $annotator = new AnnotatorMethod($method);
+                $annotator = $this->merge($annotator, $parents);
+                $annotators[$annotator->getName()] = $annotator;
+            }
         }
 
         $this->resetWith();
@@ -214,5 +217,20 @@ class Annotation implements Iterator
     public function rewind()
     {
         reset($this->annotators);
+    }
+
+    /**
+     * Count elements of an object
+     *
+     * @link  http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     *        </p>
+     *        <p>
+     *        The return value is cast to an integer.
+     * @since 5.1.0
+     */
+    public function count()
+    {
+        return count($this->annotators);
     }
 }
