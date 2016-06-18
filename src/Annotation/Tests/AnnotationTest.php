@@ -73,6 +73,14 @@ class TestExtendParent extends TestParent
     {
 
     }
+
+    /**
+     * @Route("/filter", name="test.filter")
+     */
+    public function testFilter()
+    {
+
+    }
 }
 
 /**
@@ -122,7 +130,7 @@ class AnnotationTest extends \PHPUnit_Framework_TestCase
             'name' => 'test',
         ], $annotation->getAnnotator('testAction')->getParameters()['Route']);
 
-        $this->assertEquals(1, $annotation->count());
+        $this->assertEquals(2, $annotation->count());
     }
 
     public function testMultiExtends()
@@ -149,8 +157,12 @@ class AnnotationTest extends \PHPUnit_Framework_TestCase
         ], $annotation->getAnnotator('testAction')->getParameters());
     }
 
-    public function testCoverExtendMethod()
+    public function testAnnotationFilter()
     {
+        $annotation = new Annotation(TestExtendParent::class, 'Action');
 
+        $this->assertEquals(['testAction'], array_keys($annotation->getAnnotators()));
+
+        $this->assertEquals(1, $annotation->count());
     }
 }

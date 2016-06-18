@@ -31,7 +31,28 @@ abstract class Annotator
         return $this->reflection->getName();
     }
 
+    /**
+     * @return string
+     */
     abstract public function getClassName();
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function hasParameter($name)
+    {
+        return isset($this->parameters[$name]);
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function getParameter($name)
+    {
+        return $this->hasParameter($name) ? $this->parameters[$name] : null;
+    }
 
     /**
      * @return array

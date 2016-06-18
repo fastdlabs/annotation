@@ -42,12 +42,20 @@ class Annotation implements Iterator, Countable
     protected $annotators = [];
 
     /**
+     * @var string
+     */
+    protected $filter;
+
+    /**
      * Annotation constructor.
      *
      * @param $class
+     * @param string $filter
      */
-    public function __construct($class)
+    public function __construct($class, $filter = null)
     {
+        $this->filter = $filter;
+
         $this->annotators = $this->reflection($class);
     }
 
@@ -67,6 +75,9 @@ class Annotation implements Iterator, Countable
 
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if (false !== $method->getDeclaringClass() && $method->getDeclaringClass()->getName() == $class->getName()) {
+                if (null !== $this->filter && false === strpos($method->getName(), $this->filter)) {
+                    continue;
+                }
                 $annotator = new AnnotatorMethod($method);
                 $annotator = $this->merge($annotator, $parents);
                 $annotators[$annotator->getName()] = $annotator;
@@ -162,7 +173,7 @@ class Annotation implements Iterator, Countable
      * Return the current element
      *
      * @link  http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
+     * @return Annotator Can return any type.
      * @since 5.0.0
      */
     public function current()
