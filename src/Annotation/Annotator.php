@@ -1,17 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: janhuang
- * Date: 15/4/1
- * Time: 下午11:06
- * Github: https://www.github.com/janhuang 
- * Coding: https://www.coding.net/janhuang
- * SegmentFault: http://segmentfault.com/u/janhuang
- * Blog: http://segmentfault.com/blog/janhuang
- * Gmail: bboyjanhuang@gmail.com
- */
 
 namespace FastD\Annotation;
+
+use ReflectionClass;
 
 /**
  * Class Annotator
@@ -20,10 +11,12 @@ namespace FastD\Annotation;
  */
 abstract class Annotator
 {
+    const SEPARATOR = '@';
+
     /**
-     * @var string
+     * @var ReflectionClass
      */
-    protected $separator = '@';
+    protected $reflection;
 
     /**
      * @var array
@@ -33,32 +26,19 @@ abstract class Annotator
     /**
      * @return string
      */
-    public function getSeparator()
+    public function getName()
     {
-        return $this->separator;
+        return $this->reflection->getName();
     }
 
-    /**
-     * @param string $separator
-     * @return $this
-     */
-    public function setSeparator($separator)
-    {
-        $this->separator = $separator;
-        return $this;
-    }
+    abstract public function getClassName();
 
     /**
-     * @param string $name
      * @return array
      */
-    public function getParameters($name = null)
+    public function getParameters()
     {
-        if (null === $name) {
-            return $this->parameters;
-        }
-
-        return isset($this->parameters[$name]) ? $this->parameters[$name] : false;
+        return $this->parameters;
     }
 
     /**
@@ -72,12 +52,20 @@ abstract class Annotator
     }
 
     /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->parameters);
+    }
+
+    /**
      * @param $annotation
      * @return array
      */
-    public function parse($annotation)
+    protected function parse($annotation)
     {
-        $pattern = sprintf('/\%s(?P<name>\w+)\((?P<params>.*?)\)/', $this->getSeparator());
+        $pattern = sprintf('/\%s(?P<name>\w+)\((?P<params>.*?)\)/', static::SEPARATOR);
 
         $params = [];
 

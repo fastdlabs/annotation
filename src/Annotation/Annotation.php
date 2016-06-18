@@ -14,179 +14,205 @@
 
 namespace FastD\Annotation;
 
+use ReflectionClass;
+use ReflectionMethod;
+use Iterator;
+
 /**
  * Class Annotation
  *
  * @package FastD\Annotation
  */
-class Annotation extends Annotator
+class Annotation implements Iterator
 {
     /**
-     * @var Annotation[]
+     * @var int
      */
-    protected $methods;
+    protected $position = 0;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $name;
+    protected $with = [];
 
     /**
-     * @var Annotation
+     * @var Annotator[]
      */
-    protected $parent;
-
-    /**
-     * @var string
-     */
-    protected $prefix;
-
-    /**
-     * @var string
-     */
-    protected $suffix;
+    protected $annotators = [];
 
     /**
      * Annotation constructor.
+     *
      * @param $class
-     * @param null $prefix
-     * @param null $suffix
      */
-    public function __construct($class, $prefix = null, $suffix = null)
+    public function __construct($class)
     {
-        $this->setPrefix($prefix);
+        $this->annotators = $this->reflection($class);
+    }
 
-        $this->setSuffix($suffix);
+    /**
+     * @param $class
+     * @return AnnotatorMethod[]
+     */
+    protected function reflection($class)
+    {
+        $annotators = [];
 
-        if (null !== $class) {
-            $reflection = new \ReflectionClass($class);
-
-            $params = $this->parse($reflection->getDocComment());
-
-            $this->setParameters($params);
-            $this->setName($reflection->getName());
-
-            $methods = [];
-            foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                if (null !== $this->getSuffix() && false === strpos($method->getName(), $this->getSuffix())) {
-                    continue;
-                }
-
-                if (null !== $this->getPrefix() && false === strpos($method->getName(), $this->getPrefix())) {
-                    continue;
-                }
-
-                $annotation = clone $this;
-                $annotation->setName($method->getName());
-                $annotation->setParent($this);
-                $annotation->setParameters($this->parse($method->getDocComment()));
-                $methods[] = $annotation;
-            }
-            $this->setMethods($methods);
-
-            unset($reflection, $annotation);
+        if (!($class instanceof ReflectionClass)) {
+            $class = new ReflectionClass($class);
         }
+
+        $parents = $this->recursiveReflectionParent($class);
+
+        foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            $annotator = new AnnotatorMethod($method);
+            $annotator = $this->merge($annotator, $parents);
+            $annotators[$annotator->getName()] = $annotator;
+        }
+
+        $this->resetWith();
+
+        return $annotators;
     }
 
     /**
-     * @return Annotation[]
+     * Recursive reflection.
+     *
+     * @param ReflectionClass $reflectionClass
+     * @return array
      */
-    public function getMethods()
+    protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
     {
-        return $this->methods;
+        array_push($this->with, new AnnotatorClass($reflectionClass));
+
+        if (false !== $reflectionClass->getParentClass()) {
+            $this->recursiveReflectionParent($reflectionClass->getParentClass());
+        }
+
+        return $this->with;
     }
 
     /**
-     * @param Annotation[] $methods
-     * @return $this
+     * @param AnnotatorMethod $annotatorMethod
+     * @param AnnotatorClass[] $parents
+     * @return AnnotatorMethod
      */
-    public function setMethods(array $methods)
+    protected function merge(AnnotatorMethod $annotatorMethod, array $parents = [])
     {
-        $this->methods = $methods;
-        return $this;
+        $parameters = $annotatorMethod->getParameters();
+
+        foreach ($parents as $parent) {
+            if ($parent->isEmpty()) {
+                continue;
+            }
+            $params = $parent->getParameters();
+            foreach ($params as $key => $value) {
+                if (isset($parameters[$key])) {
+                    foreach ($value as $name => $item) {
+                        if (isset($parameters[$key][$name])) {
+                            if (is_string($item)) {
+                                $parameters[$key][$name] = $item . $parameters[$key][$name];
+                            } else if (is_array($item)) {
+                                $parameters[$key][$name] = array_unique(array_merge($item, $$parameters[$key][$name]));
+                            }
+                        } else {
+                            $parameters[$key][$name] = $item;
+                        }
+                    }
+                } else {
+                    $parameters[$key] = $value;
+                }
+            }
+        }
+
+        $annotatorMethod->setParameters($parameters);
+
+        return $annotatorMethod;
     }
 
     /**
-     * @return string
+     * @return void
      */
-    public function getName()
+    public function resetWith()
     {
-        return $this->name;
+        $this->with = [];
     }
 
     /**
-     * @param string $name
-     * @return $this
+     * @return AnnotatorMethod[]
      */
-    public function setName($name)
+    public function getAnnotators()
     {
-        $this->name = $name;
-        return $this;
+        return $this->annotators;
     }
 
     /**
-     * @return Annotation
+     * @param $name
+     * @return Annotator|AnnotatorMethod|null
      */
-    public function getParent()
+    public function getAnnotator($name)
     {
-        return $this->parent;
+        return isset($this->annotators[$name]) ? $this->annotators[$name] : null;
     }
 
     /**
-     * @param Annotation $parent
-     * @return $this
+     * Return the current element
+     *
+     * @link  http://php.net/manual/en/iterator.current.php
+     * @return mixed Can return any type.
+     * @since 5.0.0
      */
-    public function setParent(Annotation $parent)
+    public function current()
     {
-        $this->parent = $parent;
-        return $this;
+        return $this->annotators[$this->key()];
     }
 
     /**
-     * @return string
+     * Move forward to next element
+     *
+     * @link  http://php.net/manual/en/iterator.next.php
+     * @return void Any returned value is ignored.
+     * @since 5.0.0
      */
-    public function getSuffix()
+    public function next()
     {
-        return $this->suffix;
+        next($this->annotators);
     }
 
     /**
-     * @param string $suffix
-     * @return $this
+     * Return the key of the current element
+     *
+     * @link  http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     * @since 5.0.0
      */
-    public function setSuffix($suffix)
+    public function key()
     {
-        $this->suffix = $suffix;
-        return $this;
+        return key($this->annotators);
     }
 
     /**
-     * @return string
+     * Checks if current position is valid
+     *
+     * @link  http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     *        Returns true on success or false on failure.
+     * @since 5.0.0
      */
-    public function getPrefix()
+    public function valid()
     {
-        return $this->prefix;
+        return isset($this->annotators[$this->key()]);
     }
 
     /**
-     * @param string $prefix
-     * @return $this
+     * Rewind the Iterator to the first element
+     *
+     * @link  http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     * @since 5.0.0
      */
-    public function setPrefix($prefix)
+    public function rewind()
     {
-        $this->prefix = $prefix;
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function __clone()
-    {
-        $this->methods = null;
-        $this->parameters = null;
-        $this->name = null;
-        $this->parent = null;
-        return $this;
+        reset($this->annotators);
     }
 }

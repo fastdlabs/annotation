@@ -16,35 +16,77 @@ namespace FastD\Annotation\Tests;
 
 use FastD\Annotation\Annotation;
 
+/**
+ * @Route("/grand")
+ * @Host("::1")
+ */
+class TestGrandParent
+{
+
+}
+
+/**
+ * @Route("/extendGrand", methods=["get", "post"])
+ */
+class TestParentExtend extends TestGrandParent
+{
+
+}
+
+/**
+ * @Route("/parent", methods=["get", "post"])
+ */
+class TestParent
+{
+
+}
+
+/**
+ * @Route("/self")
+ */
+class Test
+{
+    /**
+     * @Route("/", name="test")
+     */
+    public function testAction()
+    {
+
+    }
+}
+
+/**
+ * @Route("/extend")
+ */
+class TestExtendParent extends TestParent {
+    /**
+     * @Route("/", name="test")
+     */
+    public function testAction()
+    {
+
+    }
+}
+
+/**
+ * @Route("/ex/grand")
+ */
+class TestExtendGrandParent extends TestParentExtend {
+    /**
+     * @Route("/", name="test")
+     */
+    public function testAction()
+    {
+
+    }
+}
+
 class AnnotationTest extends \PHPUnit_Framework_TestCase
 {
     public function testParse()
     {
-        $annotation = new Annotation(Demo::class);
+        $annotation = new Annotation(Test::class);
 
-        $this->assertEquals('demoAction', $annotation->getMethods()[0]->getName());
-        $this->assertEquals('demoAction2', $annotation->getMethods()[1]->getName());
-
-        $this->assertEquals([
-            '/{name}',
-            'name' => 'abc',
-            'defaults' => [
-                'name' => 'jan',
-            ],
-            'method' => [
-                'POST'
-            ]
-        ], $annotation->getMethods()[0]->getParameters('Route'));
-
-        $this->assertEquals(3, count($annotation->getMethods()));
-    }
-
-    public function testSuffix()
-    {
-        $annotation = new Annotation(Demo::class, null, 'Action');
-
-        $this->assertEquals($annotation->getSuffix(), 'Action');
-
-        $this->assertEquals(2, count($annotation->getMethods()));
+        print_r($annotation);
     }
 }
