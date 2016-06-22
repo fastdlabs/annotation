@@ -14,9 +14,8 @@
 
 include __DIR__ . '/../vendor/autoload.php';
 
-use FastD\Annotation\Tests\Demo;
 use FastD\Annotation\Annotation;
 
-$annotation = new Annotation(Demo::class);
+$annotation = new Annotation(\FastD\Annotation\Tests\Test::class);
 
-print_r($annotation->getMethods()[0]->getParameters('Route'));
+print_r($annotation->getAnnotator('testAction')->getParameters());
