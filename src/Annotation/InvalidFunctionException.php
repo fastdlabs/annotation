@@ -10,7 +10,12 @@
 
 namespace FastD\Annotation;
 
-class AnnotationFunction
-{
+use Exception;
 
+class InvalidFunctionException extends Exception
+{
+    public function __construct($name)
+    {
+        parent::__construct(sprintf('Annotation function "%s" is undefined.'));
+    }
 }

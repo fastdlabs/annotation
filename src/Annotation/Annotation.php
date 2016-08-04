@@ -1,23 +1,14 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: janhuang
- * Date: 16/4/26
- * Time: 上午11:36
- * Github: https://www.github.com/janhuang
- * Coding: https://www.coding.net/janhuang
- * SegmentFault: http://segmentfault.com/u/janhuang
- * Blog: http://segmentfault.com/blog/janhuang
- * Gmail: bboyjanhuang@gmail.com
- * WebSite: http://www.janhuang.me
+ *
+ * @author    jan huang <bboyjanhuang@gmail.com>
+ * @copyright 2016
+ *
+ * @link      https://www.github.com/janhuang
+ * @link      http://www.fast-d.cn/
  */
 
 namespace FastD\Annotation;
-
-use FastD\Annotation\Parser\ParseClass;
-use FastD\Annotation\Parser\ParseMethod;
-use ReflectionClass;
-use ReflectionMethod;
 
 /**
  * Class Annotation
@@ -27,126 +18,47 @@ use ReflectionMethod;
 class Annotation
 {
     /**
-     * @var int
+     * @var string
      */
-    protected $position = 0;
-
-    /**
-     * @var array
-     */
-    protected $with = [];
-
-    /**
-     * @var AnnotationFunction[]
-     */
-    protected $annotations = [];
+    protected $class;
 
     /**
      * @var string
      */
-    protected $filter;
+    protected $method;
+
+    /**
+     * @var array
+     */
+    protected $functions;
 
     /**
      * Annotation constructor.
      *
      * @param $class
-     * @param string $filter
+     * @param $method
+     * @param array $functions
      */
-    public function __construct($class, $filter = null)
+    public function __construct($class, $method, array $functions = [])
     {
-        $this->filter = $filter;
+        $this->class = $class;
 
-        $this->annotations = $this->parse($class);
+        $this->method = $method;
+
+        $this->functions = $functions;
     }
 
     /**
-     * @param $class
-     * @return array
+     * @param $name
+     * @return mixed
+     * @throws InvalidFunctionException
      */
-    protected function parse($class)
+    public function callFunc($name)
     {
-        $annotations = [];
-
-        $class = new ReflectionClass($class);
-
-        $parents = $this->recursiveReflectionParent($class);
-
-        foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            if (false !== $method->getDeclaringClass() && $method->getDeclaringClass()->getName() == $class->getName()) {
-                if (null !== $this->filter && false === strpos($method->getName(), $this->filter)) {
-                    continue;
-                }
-                $annotator = new ParseMethod($method);
-                $annotator = $this->merge($annotator, $parents);
-                $annotations[$annotator->getName()] = $annotator;
-            }
+        if (!isset($this->functions[$name]) || !function_exists($name)) {
+            throw new InvalidFunctionException($name);
         }
 
-        $this->resetWith();
-
-        return $annotations;
-    }
-
-    /**
-     * Recursive reflection.
-     *
-     * @param ReflectionClass $reflectionClass
-     * @return array
-     */
-    protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
-    {
-        array_push($this->with, new ParseClass($reflectionClass));
-
-        if (false !== $reflectionClass->getParentClass()) {
-            $this->recursiveReflectionParent($reflectionClass->getParentClass());
-        }
-
-        return $this->with;
-    }
-
-    /**
-     * @param ParseMethod $annotatorMethod
-     * @param array $parents
-     * @return ParseMethod
-     */
-    protected function merge(ParseMethod $annotatorMethod, array $parents = [])
-    {
-        $parameters = $annotatorMethod->getParameters();
-
-        foreach ($parents as $parent) {
-            if ($parent->isEmpty()) {
-                continue;
-            }
-            $params = $parent->getParameters();
-            foreach ($params as $key => $value) {
-                if (isset($parameters[$key])) {
-                    foreach ($value as $name => $item) {
-                        if (isset($parameters[$key][$name])) {
-                            if (is_string($item)) {
-                                $parameters[$key][$name] = $item . $parameters[$key][$name];
-                            } else if (is_array($item)) {
-                                $parameters[$key][$name] = array_unique(array_merge($item, $$parameters[$key][$name]));
-                            }
-                        } else {
-                            $parameters[$key][$name] = $item;
-                        }
-                    }
-                } else {
-                    $parameters[$key] = $value;
-                }
-            }
-        }
-
-        $annotatorMethod->setParameters($parameters);
-
-        return $annotatorMethod;
-    }
-
-    /**
-     * @return void
-     */
-    public function resetWith()
-    {
-        $this->with = [];
+        return call_user_func_array($name, $this->functions[$name]);
     }
 }

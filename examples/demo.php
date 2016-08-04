@@ -13,11 +13,14 @@
  */
 
 use FastD\Annotation\Annotation;
+use FastD\Annotation\AnnotationParser;
 
 include __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Class Test
+ *
+ * @route("/")
  */
 class Test
 {
@@ -28,7 +31,14 @@ class Test
    {}
 }
 
-$annotation = new Annotation(Test::class);
+function route($path)
+{
+    echo $path;
+}
 
-print_r($annotation);
+$annotator = new AnnotationParser(Test::class);
+
+$annotation = $annotator->getAnnotation('a');
+
+$annotation->callFunc('route');
 
