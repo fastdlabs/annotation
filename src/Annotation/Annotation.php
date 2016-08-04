@@ -56,10 +56,14 @@ class Annotation
     {
         $this->filter = $filter;
 
-        $this->annotations = $this->reflection($class);
+        $this->annotations = $this->parse($class);
     }
 
-    protected function reflection($class)
+    /**
+     * @param $class
+     * @return array
+     */
+    protected function parse($class)
     {
         $annotations = [];
 
@@ -100,6 +104,11 @@ class Annotation
         return $this->with;
     }
 
+    /**
+     * @param ParseMethod $annotatorMethod
+     * @param array $parents
+     * @return ParseMethod
+     */
     protected function merge(ParseMethod $annotatorMethod, array $parents = [])
     {
         $parameters = $annotatorMethod->getParameters();
