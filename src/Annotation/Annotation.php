@@ -14,17 +14,17 @@
 
 namespace FastD\Annotation;
 
+use FastD\Annotation\Parser\ParseClass;
+use FastD\Annotation\Parser\ParseMethod;
 use ReflectionClass;
 use ReflectionMethod;
-use Iterator;
-use Countable;
 
 /**
  * Class Annotation
  *
  * @package FastD\Annotation
  */
-class Annotation implements Iterator, Countable
+class Annotation
 {
     /**
      * @var int
@@ -37,9 +37,9 @@ class Annotation implements Iterator, Countable
     protected $with = [];
 
     /**
-     * @var Annotator[]
+     * @var AnnotationFunction[]
      */
-    protected $annotators = [];
+    protected $annotations = [];
 
     /**
      * @var string
@@ -56,20 +56,14 @@ class Annotation implements Iterator, Countable
     {
         $this->filter = $filter;
 
-        $this->annotators = $this->reflection($class);
+        $this->annotations = $this->reflection($class);
     }
 
-    /**
-     * @param $class
-     * @return AnnotatorMethod[]
-     */
     protected function reflection($class)
     {
-        $annotators = [];
+        $annotations = [];
 
-        if (!($class instanceof ReflectionClass)) {
-            $class = new ReflectionClass($class);
-        }
+        $class = new ReflectionClass($class);
 
         $parents = $this->recursiveReflectionParent($class);
 
@@ -78,15 +72,15 @@ class Annotation implements Iterator, Countable
                 if (null !== $this->filter && false === strpos($method->getName(), $this->filter)) {
                     continue;
                 }
-                $annotator = new AnnotatorMethod($method);
+                $annotator = new ParseMethod($method);
                 $annotator = $this->merge($annotator, $parents);
-                $annotators[$annotator->getName()] = $annotator;
+                $annotations[$annotator->getName()] = $annotator;
             }
         }
 
         $this->resetWith();
 
-        return $annotators;
+        return $annotations;
     }
 
     /**
@@ -97,7 +91,7 @@ class Annotation implements Iterator, Countable
      */
     protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
     {
-        array_push($this->with, new AnnotatorClass($reflectionClass));
+        array_push($this->with, new ParseClass($reflectionClass));
 
         if (false !== $reflectionClass->getParentClass()) {
             $this->recursiveReflectionParent($reflectionClass->getParentClass());
@@ -106,12 +100,7 @@ class Annotation implements Iterator, Countable
         return $this->with;
     }
 
-    /**
-     * @param AnnotatorMethod $annotatorMethod
-     * @param AnnotatorClass[] $parents
-     * @return AnnotatorMethod
-     */
-    protected function merge(AnnotatorMethod $annotatorMethod, array $parents = [])
+    protected function merge(ParseMethod $annotatorMethod, array $parents = [])
     {
         $parameters = $annotatorMethod->getParameters();
 
@@ -150,98 +139,5 @@ class Annotation implements Iterator, Countable
     public function resetWith()
     {
         $this->with = [];
-    }
-
-    /**
-     * @return AnnotatorMethod[]
-     */
-    public function getAnnotators()
-    {
-        return $this->annotators;
-    }
-
-    /**
-     * @param $name
-     * @return Annotator|AnnotatorMethod|null
-     */
-    public function getAnnotator($name)
-    {
-        return isset($this->annotators[$name]) ? $this->annotators[$name] : null;
-    }
-
-    /**
-     * Return the current element
-     *
-     * @link  http://php.net/manual/en/iterator.current.php
-     * @return Annotator Can return any type.
-     * @since 5.0.0
-     */
-    public function current()
-    {
-        return $this->annotators[$this->key()];
-    }
-
-    /**
-     * Move forward to next element
-     *
-     * @link  http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
-     * @since 5.0.0
-     */
-    public function next()
-    {
-        next($this->annotators);
-    }
-
-    /**
-     * Return the key of the current element
-     *
-     * @link  http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
-     * @since 5.0.0
-     */
-    public function key()
-    {
-        return key($this->annotators);
-    }
-
-    /**
-     * Checks if current position is valid
-     *
-     * @link  http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     *        Returns true on success or false on failure.
-     * @since 5.0.0
-     */
-    public function valid()
-    {
-        return isset($this->annotators[$this->key()]);
-    }
-
-    /**
-     * Rewind the Iterator to the first element
-     *
-     * @link  http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
-     * @since 5.0.0
-     */
-    public function rewind()
-    {
-        reset($this->annotators);
-    }
-
-    /**
-     * Count elements of an object
-     *
-     * @link  http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     *        </p>
-     *        <p>
-     *        The return value is cast to an integer.
-     * @since 5.1.0
-     */
-    public function count()
-    {
-        return count($this->annotators);
     }
 }

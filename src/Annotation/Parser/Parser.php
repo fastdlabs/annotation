@@ -1,6 +1,6 @@
 <?php
 
-namespace FastD\Annotation;
+namespace FastD\Annotation\Parser;
 
 use ReflectionClass;
 
@@ -9,7 +9,7 @@ use ReflectionClass;
  *
  * @package FastD\Annotation
  */
-abstract class Annotator
+abstract class Parser
 {
     const SEPARATOR = '@';
 

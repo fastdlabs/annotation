@@ -1,15 +1,10 @@
 <?php
 
-namespace FastD\Annotation;
+namespace FastD\Annotation\Parser;
 
 use ReflectionMethod;
 
-/**
- * Class Annotator
- *
- * @package FastD\Annotation
- */
-class AnnotatorMethod extends Annotator
+class ParseMethod extends Parser
 {
     /**
      * Annotator constructor.

@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: janhuang
  * Date: 16/4/26
- * Time: 下午3:06
+ * Time: 下午4:57
  * Github: https://www.github.com/janhuang
  * Coding: https://www.coding.net/janhuang
  * SegmentFault: http://segmentfault.com/u/janhuang
@@ -12,18 +12,23 @@
  * WebSite: http://www.janhuang.me
  */
 
-namespace FastD\Annotation;
+use FastD\Annotation\Annotation;
+
+include __DIR__ . '/../vendor/autoload.php';
 
 /**
- * Interface AnnotationInterface
- *
- * @package FastD\Annotation
+ * Class Test
  */
-interface AnnotationInterface
+class Test
 {
     /**
-     * @param $document
-     * @return array
+     * @route("a")
      */
-    public function parse($document);
+   public function a()
+   {}
 }
+
+$annotation = new Annotation(Test::class);
+
+print_r($annotation);
+
