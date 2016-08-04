@@ -12,7 +12,7 @@
  * WebSite: http://www.janhuang.me
  */
 
-namespace FastD\Annotation\Tests;
+namespace Tests;
 
 use FastD\Annotation\Annotation;
 
