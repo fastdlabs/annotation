@@ -9,6 +9,7 @@
  */
 
 namespace FastD\Annotation;
+use FastD\Annotation\Exceptions\InvalidFunctionException;
 
 /**
  * Class Annotation
@@ -70,8 +71,12 @@ class Annotation
         $this->position = count($this->parentAnnotations);
 
         foreach ($classAnnotations as $classAnnotation) {
-            $this->mergeDirective($classAnnotation);
+            $this->classAnnotations['functions'] = $this->mergeDirective($this->classAnnotations['functions'] ?? [], $classAnnotation);
             $this->mergeVariables($classAnnotation);
+        }
+
+        foreach ($this->methodAnnotations as $key => $methodAnnotation) {
+            $this->methodAnnotations[$key]['functions'] = $this->mergeDirective($this->classAnnotations['functions'], $methodAnnotation);
         }
 
         $this->variables = $this->classAnnotations['variables'] ?? [];
@@ -90,22 +95,32 @@ class Annotation
         }
     }
 
-    /**
-     * @param $parent
-     */
-    protected function mergeDirective($parent)
+    public function getMethodAnnotations()
     {
+        return $this->methodAnnotations;
+    }
+    /**
+     * @param $directives
+     * @param $parent
+     * @return array
+     */
+    protected function mergeDirective($directives, $parent)
+    {
+        $functions = $directives;
+
         if (isset($parent['functions'])) {
             foreach ($parent['functions'] as $name => $parameters) {
                 if (isset($this->directives[$name]) && is_callable($this->directives[$name])) {
-                    $previous = $this->classAnnotations['functions'][$name] ?? [];
+                    $previous = $functions[$name] ?? [];
                     foreach ($parameters as $index => $value) {
                         $parameters[$index] = $this->directives[$name]($previous[$index] ?? '', $index, $value);
                     }
                 }
-                $this->classAnnotations['functions'][$name] = $parameters;
+                $functions[$name] = $parameters;
             }
         }
+
+        return $functions;
     }
 
     /**
@@ -119,11 +134,27 @@ class Annotation
 
     /**
      * @param $name
+     * @param callable|null $callable
      * @return bool|mixed
+     * @throws InvalidFunctionException
      */
-    public function getFunction($name)
+    public function getFunction($name, callable $callable = null)
     {
-        return $this->functions[$name] ?? false;
+        if (!isset($this->functions[$name])) {
+            return false;
+        }
+
+        $parameters = $this->functions[$name];
+
+        if (is_callable($callable)) {
+            return call_user_func_array($callable, $parameters);
+        }
+
+        if (!function_exists($name)) {
+            throw new InvalidFunctionException($name);
+        }
+
+        return call_user_func_array($name, $parameters);
     }
 
     /**

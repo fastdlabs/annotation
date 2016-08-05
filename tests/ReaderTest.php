@@ -30,6 +30,8 @@ class ReaderTest extends PHPUnit_Framework_TestCase
 
     public function testDirectives()
     {
+        include_once __DIR__ . '/functions.php';
+
         $reader = new Reader([
             'route' => function ($previous, $index, $value) {
                 return $previous . $value;
@@ -38,9 +40,13 @@ class ReaderTest extends PHPUnit_Framework_TestCase
 
         $annotation = $reader->getAnnotations(ChildController::class);
 
-        $func = $annotation->getFunction('route');
+        $routeResult = $annotation->getFunction('route');
 
-        print_r($func);
+        $this->assertEquals('/base/child', $routeResult);
+
+        $routeResult = $annotation->getMethod('indexAction')->getFunction('route');
+
+        $this->assertEquals('/base/child/index', $routeResult);
     }
 }
 
