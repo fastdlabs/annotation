@@ -2,8 +2,6 @@
 
 namespace FastD\Annotation;
 
-use FastD\Annotation\Types\Directive;
-use FastD\Annotation\Types\Variable;
 use ReflectionClass;
 
 /**
@@ -17,8 +15,9 @@ class Parser
      * @var array
      */
     protected $types = [
-        'directives' => Directive::class,
-        'variables' => Variable::class,
+        'directives' => 'FastD\Annotation\Types\Directive',
+        'variables' => 'FastD\Annotation\Types\Variable',
+        'concrete' => 'FastD\Annotation\Types\Concrete',
     ];
 
     /**
@@ -72,6 +71,52 @@ class Parser
         }
 
         return $this->extends;
+    }
+
+    /**
+     * @param ParseMethod $annotatorMethod
+     * @param array $parents
+     * @return ParseMethod
+     */
+    protected function merge(ParseMethod $annotatorMethod, array $parents = [])
+    {
+        $parameters = $annotatorMethod->getParameters();
+
+        foreach ($parents as $parent) {
+            if ($parent->isEmpty()) {
+                continue;
+            }
+            $params = $parent->getParameters();
+            foreach ($params as $key => $value) {
+                if (isset($parameters[$key])) {
+                    foreach ($value as $name => $item) {
+                        if (isset($parameters[$key][$name])) {
+                            if (is_string($item)) {
+                                $parameters[$key][$name] = $item . $parameters[$key][$name];
+                            } else if (is_array($item)) {
+                                $parameters[$key][$name] = array_unique(array_merge($item, $$parameters[$key][$name]));
+                            }
+                        } else {
+                            $parameters[$key][$name] = $item;
+                        }
+                    }
+                } else {
+                    $parameters[$key] = $value;
+                }
+            }
+        }
+
+        $annotatorMethod->setParameters($parameters);
+
+        return $annotatorMethod;
+    }
+
+    /**
+     * @return void
+     */
+    protected function clearExtends()
+    {
+        $this->extends = [];
     }
 
     /**

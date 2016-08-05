@@ -9,8 +9,16 @@
 
 namespace FastD\Annotation\Types;
 
+/**
+ * Class Types
+ * @package FastD\Annotation\Types
+ */
 abstract class Types implements TypesInterface
 {
+    /**
+     * @param $docComment
+     * @return array
+     */
     public function parse($docComment)
     {
         $pattern = $this->syntax();

@@ -10,16 +10,16 @@
 namespace FastD\Annotation\Types;
 
 /**
- * Class Variable
+ * Class Concrete
  * @package FastD\Annotation\Types
  */
-class Variable extends Types
+class Concrete extends Types
 {
     /**
      * @return string
      */
     public function syntax()
     {
-        return '/\@(?P<name>\w+)\s+(?P<params>.*?)/';
+        // TODO: Implement syntax() method.
     }
 }

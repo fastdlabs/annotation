@@ -9,8 +9,15 @@
 
 namespace FastD\Annotation\Types;
 
+/**
+ * Class Directive
+ * @package FastD\Annotation\Types
+ */
 class Directive extends Types
 {
+    /**
+     * @return string
+     */
     public function syntax()
     {
         return '/\@(?P<name>\w+)\((?P<params>.*?)\)/';
