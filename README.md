@@ -39,6 +39,46 @@ $annotation->get('name'); // foo
 $annotation->get('json'); // [ 'ab' ]
 ```
 
+## ＃　继承与覆盖
+
+变量同名会覆盖　"父类"　的变量，而指令，则会追加继承父类的实现．
+
+如：　
+
+```
+/**
+ * Class IndexController
+ * @package Tests\AnnotationsClasses
+ *
+ * @name foo
+ * @json ["abc"]
+ * @directive("test")
+ * @route("/")
+ * @Tests\AnnotationsClasses\AnnotationObject -> test()
+ */
+class IndexController
+{
+    /**
+     * @name index
+     * @route("/index")
+     */
+    public function indexAction()
+    {}
+    
+    /**
+     * @route("/default")
+     */
+    public function defaultAction()
+    {}
+}
+```
+
+在 `indexAction` 中获取 `name` 变量，则会输出 `index`，而在　`defaultAction` 中，则会输出　`foo`，其相当于 "父类"　定义已全局基础变量，而子类负责重写覆盖或读取父类．
+
+在指令中，则以继承方式展现．如上
+
+`route` 指令在 "父类" 中定义 "根"，"子类"　方法中会继承 "父类"，`/index`．
+
 ## Testing
 
 ```php
