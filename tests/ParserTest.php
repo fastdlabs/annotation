@@ -13,6 +13,8 @@ use FastD\Annotation\Parser;
 use FastD\Annotation\Types\Concrete;
 use FastD\Annotation\Types\Directive;
 use FastD\Annotation\Types\Variable;
+use Tests\AnnotationsClasses\BaseController;
+use Tests\AnnotationsClasses\ChildController;
 use Tests\AnnotationsClasses\IndexController;
 use PHPUnit_Framework_TestCase;
 
@@ -22,7 +24,67 @@ class ParserTest extends PHPUnit_Framework_TestCase
     {
         $parser = new Parser(IndexController::class);
 
-        print_r($parser);
+        $this->assertEquals([
+            IndexController::class => [
+                'variables' => [
+                    'package' => 'Tests\AnnotationsClasses',
+                    'name' => 'foo',
+                    'json' => [
+                        'abc',
+                    ],
+                ],
+                'directives' => [
+                    'directive' => [
+                        '"test"'
+                    ],
+                    'route' => [
+                        '"/"'
+                    ]
+                ]
+            ],
+        ], $parser->getClassAnnotations());
+    }
+
+    public function testHadParentParseSyntax()
+    {
+        $parser = new Parser(ChildController::class);
+
+        $this->assertEquals([
+            ChildController::class => [
+                'variables' => [
+                    'package' => 'Tests\AnnotationsClasses',
+                    'name' => 'child',
+                    'json' => [
+                        'abc',
+                    ],
+                ],
+                'directives' => [
+                    'directive' => [
+                        '"test"'
+                    ],
+                    'route' => [
+                        '"/"'
+                    ]
+                ]
+            ],
+            BaseController::class => [
+                'variables' => [
+                    'package' => 'Tests\AnnotationsClasses',
+                    'name' => 'base',
+                    'json' => [
+                        'abc',
+                    ],
+                ],
+                'directives' => [
+                    'directive' => [
+                        '"test"'
+                    ],
+                    'route' => [
+                        '"/"'
+                    ]
+                ]
+            ]
+        ], $parser->getClassAnnotations());
     }
 
     public function testVariableParseSyntax()

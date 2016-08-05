@@ -20,6 +20,8 @@ class Reader
      */
     protected $parser;
 
+    protected $directives = [];
+
     /**
      * Reader constructor.
      * @param $class
@@ -32,10 +34,22 @@ class Reader
     }
 
     /**
+     * @param $name
+     * @param $value
+     * @return $this
+     */
+    public function setDirective($name, $value)
+    {
+        $this->directives[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * @return Annotation
      */
-    public function getAnnotations()
+    public function getClassAnnotations()
     {
-        return $this->parser->getAnnotation();
+
     }
 }

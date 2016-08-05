@@ -23,7 +23,12 @@ class Parser
     /**
      * @var array
      */
-    protected $extends = [];
+    protected $classAnnotations = [];
+
+    /**
+     * @var array
+     */
+    protected $methodAnnotations = [];
 
     /**
      * @var ReflectionClass
@@ -31,29 +36,19 @@ class Parser
     protected $reflection;
 
     /**
-     * @var Annotation
-     */
-    protected $annotation;
-
-    /**
      * Parser constructor.
      * @param $class
      */
     public function __construct($class)
     {
-        $this->annotation = new Annotation();
-
         $reflectionClass = $this->getReflectionClass($class);
 
         $this->recursiveReflectionParent($reflectionClass);
 
-        foreach ($this->extends as $extend) {
-            $this->appendAnnotation($extend);
-        }
-
         foreach ($reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $annotation = $this->parseDocComment($method->getDocComment());
-            $this->appendAnnotation($annotation);
+            if (false !== $method->getDeclaringClass() && $method->getDeclaringClass()->getName() == $reflectionClass->getName()) {
+                $this->methodAnnotations[$method->getName()] = $this->parseDocComment($method->getDocComment());
+            }
         }
     }
 
@@ -78,29 +73,10 @@ class Parser
      */
     protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
     {
-        array_push($this->extends, $this->parseDocComment($reflectionClass->getDocComment()));
+        $this->classAnnotations[$reflectionClass->getName()] = $this->parseDocComment($reflectionClass->getDocComment());
 
         if (false !== $reflectionClass->getParentClass()) {
             $this->recursiveReflectionParent($reflectionClass->getParentClass());
-        }
-
-        return $this->extends;
-    }
-
-    /**
-     * @param array $annotations
-     */
-    protected function appendAnnotation(array $annotations)
-    {
-        if (isset($annotations['variables'])) {
-            foreach ($annotations['variables'] as $name => $value) {
-                $this->annotation->set($name, $value);
-            }
-        }
-        if (isset($annotations['directives'])) {
-            foreach ($annotations['directives'] as $name => $value) {
-                $this->annotation->setDirective($name, $value);
-            }
         }
     }
 
@@ -157,10 +133,18 @@ class Parser
     }
 
     /**
-     * @return Annotation
+     * @return array
      */
-    public function getAnnotation()
+    public function getClassAnnotations()
     {
-        return $this->annotation;
+        return $this->classAnnotations;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMethodAnnotations()
+    {
+        return $this->methodAnnotations;
     }
 }

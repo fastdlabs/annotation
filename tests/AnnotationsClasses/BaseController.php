@@ -10,20 +10,15 @@
 namespace Tests\AnnotationsClasses;
 
 /**
- * Class IndexController
+ * Class BaseController
  * @package Tests\AnnotationsClasses
  *
- * @name foo
+ * @name base
  * @json ["abc"]
  * @directive("test")
  * @route("/")
- * @Tests\AnnotationsClasses\AnnotationObject -> test()
  */
-class IndexController
+class BaseController
 {
-    /**
-     * @route("/index")
-     */
-    public function indexAction()
-    {}
+
 }
