@@ -16,7 +16,7 @@ class Parser
      * @var array
      */
     protected $types = [
-        'directives' => 'FastD\Annotation\Types\Directive',
+        'functions' => 'FastD\Annotation\Types\Functions',
         'variables' => 'FastD\Annotation\Types\Variable'
     ];
 

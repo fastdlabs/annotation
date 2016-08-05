@@ -13,7 +13,7 @@ namespace FastD\Annotation\Types;
  * Class Directive
  * @package FastD\Annotation\Types
  */
-class Directive implements TypesInterface
+class Functions implements TypesInterface
 {
     /**
      * @return string

@@ -40,7 +40,7 @@ class Annotation
     /**
      * @var array
      */
-    protected $directives = [];
+    protected $functions = [];
 
     /**
      * @var int
@@ -62,12 +62,12 @@ class Annotation
         $this->position = count($this->parentAnnotations);
 
         foreach ($classAnnotations as $classAnnotation) {
-            $this->extendDirective($classAnnotation);
+            $this->mergeDirective($classAnnotation);
             $this->mergeVariables($classAnnotation);
         }
 
         $this->variables = $this->classAnnotations['variables'] ?? [];
-        $this->directives = $this->classAnnotations['directives'] ?? [];
+        $this->functions = $this->classAnnotations['directives'] ?? [];
     }
 
     /**
@@ -85,25 +85,13 @@ class Annotation
     /**
      * @param $parent
      */
-    protected function extendDirective($parent)
+    protected function mergeDirective($parent)
     {
         if (isset($parent['directives'])) {
             foreach ($parent['directives'] as $name => $parameters) {
                 $this->classAnnotations['directives'][$name] = $parameters;
             }
         }
-    }
-
-    /**
-     * @param $name
-     * @param $value
-     * @return $this
-     */
-    public function set($name, $value)
-    {
-        $this->variables[$name] = $value;
-
-        return $this;
     }
 
     /**
@@ -119,21 +107,9 @@ class Annotation
      * @param $name
      * @return bool|mixed
      */
-    public function getDirective($name)
+    public function getFunction($name)
     {
-        return $this->directives[$name] ?? false;
-    }
-
-    /**
-     * @param $name
-     * @param $parameters
-     * @return $this
-     */
-    public function setDirective($name, $parameters)
-    {
-        $this->directives[$name] = $parameters;
-
-        return $this;
+        return $this->functions[$name] ?? false;
     }
 
     /**
@@ -143,8 +119,7 @@ class Annotation
     public function getMethod($method)
     {
         $this->variables = $this->methodAnnotations[$method]['variables'] ?? [];
-
-        $this->directives = $this->methodAnnotations[$method]['directives'] ?? [];
+        $this->functions = $this->methodAnnotations[$method]['directives'] ?? [];
 
         return $this;
     }
@@ -158,7 +133,7 @@ class Annotation
 
         if (isset($this->parentAnnotations[$this->position])) {
             $this->variables = $this->parentAnnotations[$this->position]['variables'] ?? [];
-            $this->directives = $this->parentAnnotations[$this->position]['directives'] ?? [];
+            $this->functions = $this->parentAnnotations[$this->position]['directives'] ?? [];
         }
 
         return $this;

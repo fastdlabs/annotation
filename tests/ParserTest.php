@@ -10,9 +10,8 @@
 namespace Tests;
 
 use FastD\Annotation\Parser;
-use FastD\Annotation\Types\Directive;
+use FastD\Annotation\Types\Functions;
 use FastD\Annotation\Types\Variable;
-use Tests\AnnotationsClasses\BaseController;
 use Tests\AnnotationsClasses\ChildController;
 use Tests\AnnotationsClasses\IndexController;
 use PHPUnit_Framework_TestCase;
@@ -32,7 +31,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                         'abc',
                     ],
                 ],
-                'directives' => [
+                'functions' => [
                     'directive' => [
                         '"test"'
                     ],
@@ -57,7 +56,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                         'abc',
                     ],
                 ],
-                'directives' => [
+                'functions' => [
                     'directive' => [
                         '"test"'
                     ],
@@ -74,7 +73,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                         'abc',
                     ],
                 ],
-                'directives' => [
+                'functions' => [
                     'directive' => [
                         '"/test"'
                     ],
@@ -111,7 +110,7 @@ EOF
 
     public function testDirectiveParseSyntax()
     {
-        $parse = new Directive();
+        $parse = new Functions();
 
         $annotation = $parse->parse(<<<EOF
 /**
