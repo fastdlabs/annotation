@@ -41,7 +41,7 @@ class Functions implements TypesInterface
             foreach ($match[1] as $key => $value) {
                 $params[$value] = array_map(function ($v) {
                     return trim($v);
-                }, explode(',', $match[2][$key]));
+                }, explode(',',  str_replace('"', '', $match[2][$key])));
             }
         }
 

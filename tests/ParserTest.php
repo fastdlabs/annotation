@@ -33,10 +33,10 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 ],
                 'functions' => [
                     'directive' => [
-                        '"test"'
+                        'test'
                     ],
                     'route' => [
-                        '"/"'
+                        '/'
                     ]
                 ]
             ],
@@ -58,10 +58,10 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 ],
                 'functions' => [
                     'directive' => [
-                        '"test"'
+                        'test'
                     ],
                     'route' => [
-                        '"/base"'
+                        '/base'
                     ]
                 ]
             ],
@@ -75,10 +75,10 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 ],
                 'functions' => [
                     'directive' => [
-                        '"/test"'
+                        '/test'
                     ],
                     'route' => [
-                        '"/child"'
+                        '/child'
                     ]
                 ]
             ],

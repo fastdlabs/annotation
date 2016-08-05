@@ -37,6 +37,10 @@ class ReaderTest extends PHPUnit_Framework_TestCase
         ]);
 
         $annotation = $reader->getAnnotations(ChildController::class);
+
+        $func = $annotation->getFunction('route');
+
+        print_r($func);
     }
 }
 
