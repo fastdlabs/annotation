@@ -15,10 +15,13 @@ namespace Tests\AnnotationsClasses;
  *
  * @name child
  * @json ["abc"]
- * @directive("test")
- * @route("/")
+ * @directive("/test")
  */
 class ChildController extends BaseController
 {
-
+    /**
+     * @route("/index")
+     */
+    public function indexAction()
+    {}
 }

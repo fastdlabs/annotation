@@ -66,37 +66,7 @@ class Reader
     public function getAnnotations($class)
     {
         if (!isset($this->annotations[$class])) {
-            $parser = new Parser($class);
-
-            $annotation = new Annotation();
-
-            foreach ($parser->getClassAnnotations() as $class => $classAnnotation) {
-                if (isset($classAnnotation['variables'])) {
-                    foreach ($classAnnotation['variables'] as $name => $value) {
-                        $annotation->set($name, $value);
-                    }
-                }
-                if (isset($classAnnotation['directives'])) {
-                    foreach ($classAnnotation['directives'] as $name => $value) {
-                        $annotation->setDirective($name, $value);
-                    }
-                }
-            }
-
-            foreach ($parser->getMethodAnnotations() as $method => $methodAnnotation) {
-                if (isset($methodAnnotation['variables'])) {
-                    foreach ($methodAnnotation['variables'] as $name => $value) {
-                        $annotation->set($name, $value);
-                    }
-                }
-                if (isset($methodAnnotation['directives'])) {
-                    foreach ($methodAnnotation['directives'] as $name => $value) {
-                        $annotation->setDirective($name, $value);
-                    }
-                }
-            }
-
-            $this->annotations[$class] = $annotation;
+            $this->annotations[$class] = new Annotation(new Parser($class));
         }
 
         return $this->annotations[$class];

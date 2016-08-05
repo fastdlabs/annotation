@@ -16,7 +16,7 @@ namespace Tests\AnnotationsClasses;
  * @name base
  * @json ["abc"]
  * @directive("test")
- * @route("/")
+ * @route("/base")
  */
 class BaseController
 {

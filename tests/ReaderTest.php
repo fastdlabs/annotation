@@ -11,7 +11,7 @@ namespace Tests;
 
 use FastD\Annotation\Reader;
 use PHPUnit_Framework_TestCase;
-use Tests\AnnotationsClasses\IndexController;
+use Tests\AnnotationsClasses\ChildController;
 
 class ReaderTest extends PHPUnit_Framework_TestCase
 {
@@ -19,9 +19,11 @@ class ReaderTest extends PHPUnit_Framework_TestCase
     {
         $reader = new Reader();
 
-        $annotation = $reader->getAnnotations(IndexController::class);
+        $annotation = $reader->getAnnotations(ChildController::class);
 
-        $this->assertEquals('foo', $annotation->get('name'));
+        $this->assertEquals('child', $annotation->get('name'));
+
+        $this->assertEquals('base', $annotation->parent()->get('name'));
     }
 }
 

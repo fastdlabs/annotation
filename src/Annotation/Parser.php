@@ -59,7 +59,7 @@ class Parser
      */
     protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
     {
-        $this->classAnnotations[$reflectionClass->getName()] = $this->parseDocComment($reflectionClass->getDocComment());
+        array_unshift($this->classAnnotations, $this->parseDocComment($reflectionClass->getDocComment()));
 
         if (false !== $reflectionClass->getParentClass()) {
             $this->recursiveReflectionParent($reflectionClass->getParentClass());

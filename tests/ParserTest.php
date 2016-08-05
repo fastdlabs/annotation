@@ -24,7 +24,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $parser = new Parser(IndexController::class);
 
         $this->assertEquals([
-            IndexController::class => [
+            [
                 'variables' => [
                     'package' => 'Tests\AnnotationsClasses',
                     'name' => 'foo',
@@ -49,24 +49,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $parser = new Parser(ChildController::class);
 
         $this->assertEquals([
-            ChildController::class => [
-                'variables' => [
-                    'package' => 'Tests\AnnotationsClasses',
-                    'name' => 'child',
-                    'json' => [
-                        'abc',
-                    ],
-                ],
-                'directives' => [
-                    'directive' => [
-                        '"test"'
-                    ],
-                    'route' => [
-                        '"/"'
-                    ]
-                ]
-            ],
-            BaseController::class => [
+            [
                 'variables' => [
                     'package' => 'Tests\AnnotationsClasses',
                     'name' => 'base',
@@ -79,10 +62,24 @@ class ParserTest extends PHPUnit_Framework_TestCase
                         '"test"'
                     ],
                     'route' => [
-                        '"/"'
+                        '"/base"'
                     ]
                 ]
-            ]
+            ],
+            [
+                'variables' => [
+                    'package' => 'Tests\AnnotationsClasses',
+                    'name' => 'child',
+                    'json' => [
+                        'abc',
+                    ],
+                ],
+                'directives' => [
+                    'directive' => [
+                        '"/test"'
+                    ],
+                ]
+            ],
         ], $parser->getClassAnnotations());
     }
 
