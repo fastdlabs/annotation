@@ -30,10 +30,13 @@ class ReaderTest extends PHPUnit_Framework_TestCase
 
     public function testDirectives()
     {
-        $reader = new Reader();
+        $reader = new Reader([
+            'route' => function ($previous, $index, $value) {
+                return $previous . $value;
+            }
+        ]);
 
         $annotation = $reader->getAnnotations(ChildController::class);
-
     }
 }
 

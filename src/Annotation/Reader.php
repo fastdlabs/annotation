@@ -26,6 +26,15 @@ class Reader
     protected $directives = [];
 
     /**
+     * Reader constructor.
+     * @param array $directives
+     */
+    public function __construct(array $directives = [])
+    {
+        $this->directives = $directives;
+    }
+
+    /**
      * @param $name
      * @param $value
      * @return $this
@@ -66,7 +75,7 @@ class Reader
     public function getAnnotations($class)
     {
         if (!isset($this->annotations[$class])) {
-            $this->annotations[$class] = new Annotation(new Parser($class));
+            $this->annotations[$class] = new Annotation(new Parser($class), $this->directives);
         }
 
         return $this->annotations[$class];

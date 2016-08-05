@@ -77,6 +77,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
                     'directive' => [
                         '"/test"'
                     ],
+                    'route' => [
+                        '"/child"'
+                    ]
                 ]
             ],
         ], $parser->getClassAnnotations());
