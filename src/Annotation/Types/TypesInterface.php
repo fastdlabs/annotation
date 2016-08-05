@@ -7,10 +7,9 @@
  * @link      http://www.fast-d.cn/
  */
 
-namespace Tests\AnnotationsClassess;
+namespace FastD\Annotation\Types;
 
-class IndexController
+interface TypesInterface
 {
-    public function indexAction()
-    {}
+    public function syntax();
 }

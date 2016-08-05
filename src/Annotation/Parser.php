@@ -2,6 +2,8 @@
 
 namespace FastD\Annotation;
 
+use FastD\Annotation\Types\Directive;
+use FastD\Annotation\Types\Variable;
 use ReflectionClass;
 
 /**
@@ -11,7 +13,18 @@ use ReflectionClass;
  */
 class Parser
 {
-    const SEPARATOR = '@';
+    /**
+     * @var array
+     */
+    protected $types = [
+        'directives' => Directive::class,
+        'variables' => Variable::class,
+    ];
+
+    /**
+     * @var array
+     */
+    protected $extends = [];
 
     /**
      * @var ReflectionClass
@@ -19,99 +32,60 @@ class Parser
     protected $reflection;
 
     /**
-     * @var array
+     * Parser constructor.
+     * @param $class
      */
-    protected $parameters = [];
-
-    /**
-     * @return string
-     */
-    public function getName()
+    public function __construct($class)
     {
-        return $this->reflection->getName();
+        $reflectionClass = $this->getReflectionClass($class);
+
+        $parents = $this->recursiveReflectionParent($reflectionClass);
+
+        print_r($parents);
     }
 
     /**
-     * @param $name
-     * @return bool
+     * @param $class
+     * @return ReflectionClass
      */
-    public function hasParameter($name)
+    protected function getReflectionClass($class)
     {
-        return isset($this->parameters[$name]);
-    }
-
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function getParameter($name)
-    {
-        return $this->hasParameter($name) ? $this->parameters[$name] : null;
-    }
-
-    /**
-     * @return array
-     */
-    public function getParameters()
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * @param array $parameters
-     * @return $this
-     */
-    public function setParameters($parameters)
-    {
-        $this->parameters = $parameters;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEmpty()
-    {
-        return empty($this->parameters);
-    }
-
-    /**
-     * @param $annotation
-     * @return array
-     */
-    protected function parse($annotation)
-    {
-        $pattern = sprintf('/\%s(?P<name>\w+)\((?P<params>.*?)\)/', static::SEPARATOR);
-
-        $params = [];
-
-        if (preg_match_all($pattern, str_replace(array("\r\n", "\n", '*'), '', $annotation), $match)) {
-            foreach ($match['name'] as $key => $name) {
-                $params[$name][$key] = $match['params'][$key];
-            }
-            unset($match);
-
-            foreach ($params as $name => $param) {
-                $param = preg_split('/(?<=\"|\]|\}),\s*(?=\w)/', str_replace('\\', '\\\\', implode(',', $param)));
-                $parameters = [];
-                foreach ($param as $key => $value) {
-                    if (false !== strpos($value, '=')) {
-                        list($key, $value) = explode('=', $value);
-                        if (false !== ($json = json_decode($value, true))) {
-                            $value = $json;
-                            unset($json);
-                        }
-                    } else {
-                        $value = trim($value, '"');
-                    }
-
-                    $parameters[$key] = $value;
-                }
-                $params[$name] = $parameters;
-                unset($parameters);
-            }
+        if (null === $this->reflection) {
+            $this->reflection = new ReflectionClass($class);
         }
 
-        return $params;
+        return $this->reflection;
+    }
+
+    /**
+     * Recursive reflection.
+     *
+     * @param ReflectionClass $reflectionClass
+     * @return array
+     */
+    protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
+    {
+        array_push($this->extends, $this->parseDocComment($reflectionClass->getDocComment()));
+
+        if (false !== $reflectionClass->getParentClass()) {
+            $this->recursiveReflectionParent($reflectionClass->getParentClass());
+        }
+
+        return $this->extends;
+    }
+
+    /**
+     * @param $docComment
+     * @return array
+     */
+    public function parseDocComment($docComment)
+    {
+        $annotations = [];
+
+        foreach ($this->types as $name => $type) {
+            $annotations[$name] = (new $type)->parse($docComment);
+        }
+
+        return $annotations;
     }
 }

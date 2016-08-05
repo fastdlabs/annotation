@@ -82,22 +82,7 @@ class AnnotationParser
         return $annotations;
     }
 
-    /**
-     * Recursive reflection.
-     *
-     * @param ReflectionClass $reflectionClass
-     * @return array
-     */
-    protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
-    {
-        array_push($this->extends, new ParseClass($reflectionClass));
 
-        if (false !== $reflectionClass->getParentClass()) {
-            $this->recursiveReflectionParent($reflectionClass->getParentClass());
-        }
-
-        return $this->extends;
-    }
 
     /**
      * @param ParseMethod $annotatorMethod

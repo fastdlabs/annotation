@@ -13,12 +13,15 @@ class Reader
 {
     protected $parser;
 
-    protected $class;
-
     public function __construct($class)
     {
-        $this->parser = new Parser();
+        $this->parser = new Parser($class);
 
-        $this->class = $class;
+        $params = $this->parser->parse($class);
+    }
+
+    public function getAnnotations()
+    {
+
     }
 }
