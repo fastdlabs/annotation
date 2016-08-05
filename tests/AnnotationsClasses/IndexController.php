@@ -11,7 +11,7 @@ namespace Tests\AnnotationsClasses;
 
 /**
  * Class IndexController
- * @package Tests\AnnotationsClassess
+ * @package Tests\AnnotationsClasses
  *
  * @name foo
  * @json ["abc"]

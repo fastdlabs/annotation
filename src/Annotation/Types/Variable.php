@@ -20,7 +20,8 @@ class Variable implements TypesInterface
      */
     public function syntax()
     {
-        return '/\@(\w+)\s(\w+)/';
+        // @Package\s+\\?[A-Za-z]+(\\[A-Za-z0-9_]+)*
+        return '/\@([a-zA-Z0-9]{1,})\s{1,}(.*)/';
     }
 
     /**
@@ -38,7 +39,10 @@ class Variable implements TypesInterface
                 return [];
             }
             foreach ($match[1] as $key => $value) {
-                $params[$value] = trim($match[2][$key], '"');
+                if (false !== strpos($match[2][$key], '[') || false !== strpos($match[2][$key], '{')) {
+                    $match[2][$key] = json_decode($match[2][$key]);
+                }
+                $params[$value] = $match[2][$key];
             }
         }
 

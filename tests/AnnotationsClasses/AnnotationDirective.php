@@ -7,7 +7,7 @@
  * @link      http://www.fast-d.cn/
  */
 
-namespace Tests\AnnotationsClassess;
+namespace Tests\AnnotationsClasses;
 
 class AnnotationDirective
 {

@@ -20,7 +20,7 @@ class Concrete implements TypesInterface
      */
     public function syntax()
     {
-        // TODO: Implement syntax() method.
+        return '/\@(.*)\s\-\>\s()/';
     }
 
     /**
@@ -29,6 +29,22 @@ class Concrete implements TypesInterface
      */
     public function parse($docComment)
     {
-        // TODO: Implement parse() method.
+        $pattern = $this->syntax();
+
+        $params = [];
+
+        if (preg_match_all($pattern, $docComment, $match)) {
+            if (!isset($match[1])) {
+                return [];
+            }
+            foreach ($match[1] as $key => $value) {
+                if (false !== strpos($match[2][$key], '[') || false !== strpos($match[2][$key], '{')) {
+                    $match[2][$key] = json_decode($match[2][$key]);
+                }
+                $params[$value] = $match[2][$key];
+            }
+        }
+
+        return $params;
     }
 }

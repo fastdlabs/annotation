@@ -20,7 +20,7 @@ class Directive implements TypesInterface
      */
     public function syntax()
     {
-        return '/\@(\w+)\((.*?)\)/';
+        return '/\@(\w+)\((.*)\)/';
     }
 
     /**

@@ -10,6 +10,7 @@
 namespace Tests;
 
 use FastD\Annotation\Parser;
+use FastD\Annotation\Types\Concrete;
 use FastD\Annotation\Types\Directive;
 use FastD\Annotation\Types\Variable;
 use Tests\AnnotationsClasses\IndexController;
@@ -29,7 +30,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $annotation = $parse->parse(<<<EOF
 /**
  * Class IndexController
- * @package Tests\AnnotationsClassess
+ * @package Tests\AnnotationsClasses
  *
  * @name foo
  * @json ["abc"]
@@ -38,6 +39,13 @@ class ParserTest extends PHPUnit_Framework_TestCase
  */
 EOF
 );
+        $this->assertEquals([
+            'package' => 'Tests\AnnotationsClasses',
+            'name' => 'foo',
+            'json' => [
+                'abc'
+            ]
+        ], $annotation);
     }
 
     public function testDirectiveParseSyntax()
@@ -47,12 +55,32 @@ EOF
         $annotation = $parse->parse(<<<EOF
 /**
  * Class IndexController
- * @package Tests\AnnotationsClassess
+ * @package Tests\AnnotationsClasses
  *
  * @name foo
  * @json ["abc"]
- * @directive("test", "bbb")
- * @directive2("test", "bbb")
+ * @directive(a, b)
+ * @directive2(a, b)
+ * @Tests\AnnotationsClasses\AnnotationObject -> test()
+ */
+EOF
+);
+
+    }
+
+    public function testConcreteParseSyntax()
+    {
+        $parse = new Concrete();
+
+        $annotation = $parse->parse(<<<EOF
+/**
+ * Class IndexController
+ * @package Tests\AnnotationsClasses
+ *
+ * @name foo
+ * @json ["abc"]
+ * @directive(a, b)
+ * @directive2(a, b)
  * @Tests\AnnotationsClasses\AnnotationObject -> test()
  */
 EOF
