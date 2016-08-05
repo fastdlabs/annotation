@@ -39,8 +39,6 @@ class Parser
         $reflectionClass = $this->getReflectionClass($class);
 
         $parents = $this->recursiveReflectionParent($reflectionClass);
-
-        print_r($parents);
     }
 
     /**
@@ -73,12 +71,8 @@ class Parser
         return $this->extends;
     }
 
-    /**
-     * @param ParseMethod $annotatorMethod
-     * @param array $parents
-     * @return ParseMethod
-     */
-    protected function merge(ParseMethod $annotatorMethod, array $parents = [])
+
+    protected function merge()
     {
         $parameters = $annotatorMethod->getParameters();
 

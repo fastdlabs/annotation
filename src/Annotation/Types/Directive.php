@@ -13,13 +13,38 @@ namespace FastD\Annotation\Types;
  * Class Directive
  * @package FastD\Annotation\Types
  */
-class Directive extends Types
+class Directive implements TypesInterface
 {
     /**
      * @return string
      */
     public function syntax()
     {
-        return '/\@(?P<name>\w+)\((?P<params>.*?)\)/';
+        return '/\@(\w+)\((.*?)\)/';
+    }
+
+    /**
+     * @param $docComment
+     * @return array
+     */
+    public function parse($docComment)
+    {
+        $pattern = $this->syntax();
+
+        $params = [];
+
+        if (preg_match_all($pattern, $docComment, $match)) {
+            if (!isset($match[1])) {
+                return [];
+            }
+
+            foreach ($match[1] as $key => $value) {
+                $params[$value] = array_map(function ($v) {
+                    return trim($v);
+                }, explode(',', $match[2][$key]));
+            }
+        }
+
+        return $params;
     }
 }

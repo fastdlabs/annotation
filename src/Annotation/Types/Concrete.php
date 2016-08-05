@@ -13,7 +13,7 @@ namespace FastD\Annotation\Types;
  * Class Concrete
  * @package FastD\Annotation\Types
  */
-class Concrete extends Types
+class Concrete implements TypesInterface
 {
     /**
      * @return string
@@ -21,5 +21,14 @@ class Concrete extends Types
     public function syntax()
     {
         // TODO: Implement syntax() method.
+    }
+
+    /**
+     * @param $docComment
+     * @return array
+     */
+    public function parse($docComment)
+    {
+        // TODO: Implement parse() method.
     }
 }
