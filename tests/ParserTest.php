@@ -20,7 +20,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
 {
     public function testParseSyntax()
     {
-//        $parser = new Parser(IndexController::class);
+        $parser = new Parser(IndexController::class);
+
+        print_r($parser);
     }
 
     public function testVariableParseSyntax()
@@ -39,6 +41,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
  */
 EOF
 );
+
         $this->assertEquals([
             'package' => 'Tests\AnnotationsClasses',
             'name' => 'foo',
@@ -66,6 +69,14 @@ EOF
 EOF
 );
 
+        $this->assertEquals([
+            'directive' => [
+                'a', 'b'
+            ],
+            'directive2' => [
+                'a', 'b'
+            ],
+        ], $annotation);
     }
 
     public function testConcreteParseSyntax()
@@ -85,8 +96,6 @@ EOF
  */
 EOF
 );
-
-        print_r($annotation);
     }
 }
 

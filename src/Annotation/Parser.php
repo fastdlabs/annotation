@@ -3,6 +3,7 @@
 namespace FastD\Annotation;
 
 use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * Class Annotator
@@ -16,8 +17,7 @@ class Parser
      */
     protected $types = [
         'directives' => 'FastD\Annotation\Types\Directive',
-        'variables' => 'FastD\Annotation\Types\Variable',
-        'concrete' => 'FastD\Annotation\Types\Concrete',
+        'variables' => 'FastD\Annotation\Types\Variable'
     ];
 
     /**
@@ -31,14 +31,30 @@ class Parser
     protected $reflection;
 
     /**
+     * @var Annotation
+     */
+    protected $annotation;
+
+    /**
      * Parser constructor.
      * @param $class
      */
     public function __construct($class)
     {
+        $this->annotation = new Annotation();
+
         $reflectionClass = $this->getReflectionClass($class);
 
-        $parents = $this->recursiveReflectionParent($reflectionClass);
+        $this->recursiveReflectionParent($reflectionClass);
+
+        foreach ($this->extends as $extend) {
+            $this->appendAnnotation($extend);
+        }
+
+        foreach ($reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            $annotation = $this->parseDocComment($method->getDocComment());
+            $this->appendAnnotation($annotation);
+        }
     }
 
     /**
@@ -71,6 +87,22 @@ class Parser
         return $this->extends;
     }
 
+    /**
+     * @param array $annotations
+     */
+    protected function appendAnnotation(array $annotations)
+    {
+        if (isset($annotations['variables'])) {
+            foreach ($annotations['variables'] as $name => $value) {
+                $this->annotation->set($name, $value);
+            }
+        }
+        if (isset($annotations['directives'])) {
+            foreach ($annotations['directives'] as $name => $value) {
+                $this->annotation->setDirective($name, $value);
+            }
+        }
+    }
 
     protected function merge()
     {
@@ -106,19 +138,15 @@ class Parser
     }
 
     /**
-     * @return void
-     */
-    protected function clearExtends()
-    {
-        $this->extends = [];
-    }
-
-    /**
      * @param $docComment
      * @return array
      */
     public function parseDocComment($docComment)
     {
+        if (!$docComment) {
+            return [];
+        }
+
         $annotations = [];
 
         foreach ($this->types as $name => $type) {
@@ -126,5 +154,13 @@ class Parser
         }
 
         return $annotations;
+    }
+
+    /**
+     * @return Annotation
+     */
+    public function getAnnotation()
+    {
+        return $this->annotation;
     }
 }

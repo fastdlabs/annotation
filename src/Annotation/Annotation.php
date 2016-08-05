@@ -18,47 +18,54 @@ namespace FastD\Annotation;
 class Annotation
 {
     /**
-     * @var string
+     * @var array
      */
-    protected $class;
-
-    /**
-     * @var string
-     */
-    protected $method;
+    protected $variables = [];
 
     /**
      * @var array
      */
-    protected $functions;
+    protected $directives = [];
 
     /**
-     * Annotation constructor.
-     *
-     * @param $class
-     * @param $method
-     * @param array $functions
+     * @param $name
+     * @param $value
+     * @return $this
      */
-    public function __construct($class, $method, array $functions = [])
+    public function set($name, $value)
     {
-        $this->class = $class;
+        $this->variables[$name] = $value;
 
-        $this->method = $method;
-
-        $this->functions = $functions;
+        return $this;
     }
 
     /**
      * @param $name
-     * @return mixed
-     * @throws InvalidFunctionException
+     * @return bool|mixed
      */
-    public function callFunc($name)
+    public function get($name)
     {
-        if (!isset($this->functions[$name]) || !function_exists($name)) {
-            throw new InvalidFunctionException($name);
-        }
+        return $this->variables[$name] ?? false;
+    }
 
-        return call_user_func_array($name, $this->functions[$name]);
+    /**
+     * @param $name
+     * @return bool|mixed
+     */
+    public function getDirective($name)
+    {
+        return $this->directives[$name] ?? false;
+    }
+
+    /**
+     * @param $name
+     * @param $parameters
+     * @return $this
+     */
+    public function setDirective($name, $parameters)
+    {
+        $this->directives[$name] = $parameters;
+
+        return $this;
     }
 }

@@ -9,19 +9,33 @@
 
 namespace FastD\Annotation;
 
+/**
+ * Class Reader
+ * @package FastD\Annotation
+ */
 class Reader
 {
+    /**
+     * @var Parser
+     */
     protected $parser;
 
+    /**
+     * Reader constructor.
+     * @param $class
+     */
     public function __construct($class)
     {
         $this->parser = new Parser($class);
 
-        $params = $this->parser->parse($class);
+        $this->parser->parseDocComment($class);
     }
 
+    /**
+     * @return Annotation
+     */
     public function getAnnotations()
     {
-
+        return $this->parser->getAnnotation();
     }
 }
