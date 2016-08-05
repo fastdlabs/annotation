@@ -14,155 +14,16 @@
 
 namespace Tests;
 
-use FastD\Annotation\Annotation;
+use FastD\Annotation\Reader;
+use PHPUnit_Framework_TestCase;
+use Tests\AnnotationsClassess\IndexController;
 
-/**
- * @Route("/grand")
- * @Host("::1")
- */
-class TestGrandParent
+class AnnotationTest extends PHPUnit_Framework_TestCase
 {
-
-}
-
-/**
- * @Route("/extendGrand", methods=["get", "post"])
- */
-class TestParentExtend extends TestGrandParent
-{
-
-}
-
-/**
- * @Route("/parent", methods=["get", "post"])
- */
-class TestParent
-{
-    /**
-     * @Route("/cover")
-     */
-    public function testCoverAction()
+    public function testClass()
     {
+        $reader = new Reader(IndexController::class);
 
-    }
-}
-
-/**
- * @Route("/self")
- */
-class Test
-{
-    /**
-     * @Route("/", name="test")
-     */
-    public function testAction()
-    {
-
-    }
-}
-
-/**
- * @Route("/extend")
- */
-class TestExtendParent extends TestParent
-{
-    /**
-     * @Route("/", name="test")
-     */
-    public function testAction()
-    {
-
-    }
-
-    /**
-     * @Route("/filter", name="test.filter")
-     */
-    public function testFilter()
-    {
-
-    }
-}
-
-/**
- * @Route("/ex/grand")
- */
-class TestExtendGrandParent extends TestParentExtend
-{
-    /**
-     * @Route("/", name="test")
-     */
-    public function testAction()
-    {
-
-    }
-}
-
-class AnnotationTest extends \PHPUnit_Framework_TestCase
-{
-    public function testNotExtends()
-    {
-        $annotation = new Annotation(Test::class);
-
-        $this->assertEquals([
-            "/self/",
-            "name" => 'test'
-        ], $annotation->getAnnotator('testAction')->getParameters()['Route']);
-    }
-
-    public function testOnceExtends()
-    {
-        $annotation = new Annotation(TestExtendParent::class);
-
-        $this->assertEquals([
-            '/parent/extend/',
-            'methods' => ['get', 'post'],
-            'name' => 'test',
-        ], $annotation->getAnnotator('testAction')->getParameters()['Route']);
-    }
-
-    public function testExtendCover()
-    {
-        $annotation = new Annotation(TestExtendParent::class);
-
-        $this->assertEquals([
-            '/parent/extend/',
-            'methods' => ['get', 'post'],
-            'name' => 'test',
-        ], $annotation->getAnnotator('testAction')->getParameters()['Route']);
-
-        $this->assertEquals(2, $annotation->count());
-    }
-
-    public function testMultiExtends()
-    {
-        $annotation = new Annotation(TestExtendGrandParent::class);
-
-        $this->assertEquals([
-            '/grand/extendGrand/ex/grand/',
-            'methods' => ['get', 'post'],
-            'name' => 'test'
-        ], $annotation->getAnnotator('testAction')->getParameters()['Route']);
-
-        $this->assertEquals([
-            '::1'
-        ], $annotation->getAnnotator('testAction')->getParameters()['Host']);
-
-        $this->assertEquals([
-            'Route' => [
-                '/grand/extendGrand/ex/grand/',
-                'methods' => ['get', 'post'],
-                'name' => 'test'
-            ],
-            'Host' => ['::1']
-        ], $annotation->getAnnotator('testAction')->getParameters());
-    }
-
-    public function testAnnotationFilter()
-    {
-        $annotation = new Annotation(TestExtendParent::class, 'Action');
-
-        $this->assertEquals(['testAction'], array_keys($annotation->getAnnotators()));
-
-        $this->assertEquals(1, $annotation->count());
+        print_r($reader);
     }
 }

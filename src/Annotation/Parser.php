@@ -1,6 +1,6 @@
 <?php
 
-namespace FastD\Annotation\Parser;
+namespace FastD\Annotation;
 
 use ReflectionClass;
 
@@ -9,7 +9,7 @@ use ReflectionClass;
  *
  * @package FastD\Annotation
  */
-abstract class Parser
+class Parser
 {
     const SEPARATOR = '@';
 
@@ -30,11 +30,6 @@ abstract class Parser
     {
         return $this->reflection->getName();
     }
-
-    /**
-     * @return string
-     */
-    abstract public function getClassName();
 
     /**
      * @param $name
