@@ -20,6 +20,7 @@ namespace Tests\AnnotationsClasses;
 class ChildController extends BaseController
 {
     /**
+     * @name method
      * @route("/index")
      */
     public function indexAction()

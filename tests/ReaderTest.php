@@ -24,6 +24,8 @@ class ReaderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('child', $annotation->get('name'));
 
         $this->assertEquals('base', $annotation->parent()->get('name'));
+
+        $this->assertEquals('method', $annotation->getMethod('indexAction')->get('name'));
     }
 }
 
