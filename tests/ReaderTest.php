@@ -17,6 +17,11 @@ class ReaderTest extends PHPUnit_Framework_TestCase
 {
     public function testAnnotationReader()
     {
+        $reader = new Reader();
+
+        $annotation = $reader->getAnnotations(IndexController::class);
+
+        $this->assertEquals('foo', $annotation->get('name'));
     }
 }
 

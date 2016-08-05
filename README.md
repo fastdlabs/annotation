@@ -18,28 +18,26 @@ composer require "fastd/annotation"
 ## 使用
 
 ```php
-use FastD\Annotation\Annotation;
+use FastD\Annotation\Reader;
+use Tests\AnnotationsClasses\IndexController;
 
-$annotation = new Annotation(\FastD\Annotation\Tests\Test::class);
+$reader = new Reader();
 
-print_r($annotation->getAnnotator('testAction')->getParameters());
+/**
+ * Class IndexController
+ * @package Tests\AnnotationsClasses
+ *
+ * @name foo
+ * @json ["abc"]
+ * @directive("test")
+ * @route("/")
+ * @Tests\AnnotationsClasses\AnnotationObject -> test()
+ */
+$annotation = $reader->getAnnotations(IndexController::class);
+
+$annotation->get('name'); // foo
+$annotation->get('json'); // [ 'ab' ]
 ```
-
-查看 `Demo` 内部方法注释，目前只支持 json 字符，赋值解析。类似 Symfony 注释写法类似。
-
-上述 demo 会产生: 
-
-```php
-Array
-(
-    [0] => /self/{name}
-    [name] => test
-)
-```
-
-对应会解析对应的参数。
-
-**相同注释会进行自动合并。**
 
 ## Testing
 

@@ -10,7 +10,6 @@
 namespace Tests;
 
 use FastD\Annotation\Parser;
-use FastD\Annotation\Types\Concrete;
 use FastD\Annotation\Types\Directive;
 use FastD\Annotation\Types\Variable;
 use Tests\AnnotationsClasses\BaseController;
@@ -139,25 +138,6 @@ EOF
                 'a', 'b'
             ],
         ], $annotation);
-    }
-
-    public function testConcreteParseSyntax()
-    {
-        $parse = new Concrete();
-
-        $annotation = $parse->parse(<<<EOF
-/**
- * Class IndexController
- * @package Tests\AnnotationsClasses
- *
- * @name foo
- * @json ["abc"]
- * @directive(a, b)
- * @directive2(a, b)
- * @Tests\AnnotationsClasses\AnnotationObject -> test()
- */
-EOF
-);
     }
 }
 

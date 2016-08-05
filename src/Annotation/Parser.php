@@ -31,17 +31,12 @@ class Parser
     protected $methodAnnotations = [];
 
     /**
-     * @var ReflectionClass
-     */
-    protected $reflection;
-
-    /**
      * Parser constructor.
      * @param $class
      */
     public function __construct($class)
     {
-        $reflectionClass = $this->getReflectionClass($class);
+        $reflectionClass = new ReflectionClass($class);
 
         $this->recursiveReflectionParent($reflectionClass);
 
@@ -49,20 +44,11 @@ class Parser
             if (false !== $method->getDeclaringClass() && $method->getDeclaringClass()->getName() == $reflectionClass->getName()) {
                 $this->methodAnnotations[$method->getName()] = $this->parseDocComment($method->getDocComment());
             }
-        }
-    }
 
-    /**
-     * @param $class
-     * @return ReflectionClass
-     */
-    protected function getReflectionClass($class)
-    {
-        if (null === $this->reflection) {
-            $this->reflection = new ReflectionClass($class);
+            unset($method);
         }
 
-        return $this->reflection;
+        unset($reflectionClass);
     }
 
     /**
@@ -78,39 +64,6 @@ class Parser
         if (false !== $reflectionClass->getParentClass()) {
             $this->recursiveReflectionParent($reflectionClass->getParentClass());
         }
-    }
-
-    protected function merge()
-    {
-        $parameters = $annotatorMethod->getParameters();
-
-        foreach ($parents as $parent) {
-            if ($parent->isEmpty()) {
-                continue;
-            }
-            $params = $parent->getParameters();
-            foreach ($params as $key => $value) {
-                if (isset($parameters[$key])) {
-                    foreach ($value as $name => $item) {
-                        if (isset($parameters[$key][$name])) {
-                            if (is_string($item)) {
-                                $parameters[$key][$name] = $item . $parameters[$key][$name];
-                            } else if (is_array($item)) {
-                                $parameters[$key][$name] = array_unique(array_merge($item, $$parameters[$key][$name]));
-                            }
-                        } else {
-                            $parameters[$key][$name] = $item;
-                        }
-                    }
-                } else {
-                    $parameters[$key] = $value;
-                }
-            }
-        }
-
-        $annotatorMethod->setParameters($parameters);
-
-        return $annotatorMethod;
     }
 
     /**
