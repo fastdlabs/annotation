@@ -1,6 +1,6 @@
 {
     "name": "fastd/annotation",
-    "description": "Fastd php simple framework Annotation Component",
+    "description": "Fastd Annotation",
     "license": "MIT",
     "authors": [
         {
@@ -10,24 +10,19 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.0"
+        "php": ">=5.6"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0"
     },
     "autoload": {
         "psr-4": {
-            "FastD\\": "src"
+            "FastD\\Annotation\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
         }
     }
 }

@@ -7,8 +7,6 @@
  * @link      http://www.fast-d.cn/
  */
 
-namespace Tests;
-
 use FastD\Annotation\Reader;
 use PHPUnit_Framework_TestCase;
 use Tests\AnnotationsClasses\ChildController;

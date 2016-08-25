@@ -7,8 +7,6 @@
  * @link      http://www.fast-d.cn/
  */
 
-namespace Tests\AnnotationsClasses;
-
 /**
  * Class ChildController
  * @package Tests\AnnotationsClasses

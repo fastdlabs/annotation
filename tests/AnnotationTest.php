@@ -12,8 +12,6 @@
  * WebSite: http://www.janhuang.me
  */
 
-namespace Tests;
-
 use FastD\Annotation\Reader;
 use PHPUnit_Framework_TestCase;
 use Tests\AnnotationsClasses\IndexController;

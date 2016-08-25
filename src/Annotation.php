@@ -9,6 +9,7 @@
  */
 
 namespace FastD\Annotation;
+
 use FastD\Annotation\Exceptions\InvalidFunctionException;
 
 /**

@@ -7,8 +7,6 @@
  * @link      http://www.fast-d.cn/
  */
 
-namespace Tests;
-
 use FastD\Annotation\Parser;
 use FastD\Annotation\Types\Functions;
 use FastD\Annotation\Types\Variable;
