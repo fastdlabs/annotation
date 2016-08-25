@@ -2,6 +2,8 @@
 
 namespace FastD\Annotation;
 
+use FastD\Annotation\Types\Functions;
+use FastD\Annotation\Types\Variable;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -16,8 +18,8 @@ class Parser
      * @var array
      */
     protected $types = [
-        'functions' => 'FastD\Annotation\Types\Functions',
-        'variables' => 'FastD\Annotation\Types\Variable'
+        'functions' => Functions::class,
+        'variables' => Variable::class,
     ];
 
     /**
