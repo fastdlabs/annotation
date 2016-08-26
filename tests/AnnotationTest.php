@@ -13,8 +13,6 @@
  */
 
 use FastD\Annotation\Reader;
-use PHPUnit_Framework_TestCase;
-use Tests\AnnotationsClasses\IndexController;
 
 class AnnotationTest extends PHPUnit_Framework_TestCase
 {

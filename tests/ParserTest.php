@@ -10,9 +10,6 @@
 use FastD\Annotation\Parser;
 use FastD\Annotation\Types\Functions;
 use FastD\Annotation\Types\Variable;
-use Tests\AnnotationsClasses\ChildController;
-use Tests\AnnotationsClasses\IndexController;
-use PHPUnit_Framework_TestCase;
 
 class ParserTest extends PHPUnit_Framework_TestCase
 {
