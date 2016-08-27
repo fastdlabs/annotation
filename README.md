@@ -7,7 +7,7 @@
 
 ## 要求
 
-* PHP 7.0+
+* PHP 5.6+
 
 ## Composer
 
