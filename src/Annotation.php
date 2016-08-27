@@ -44,8 +44,6 @@ class Annotation
      */
     protected $annotationFunctions = [];
 
-    protected $annotationFunctionResults = [];
-
     /**
      * @var array
      */
@@ -143,7 +141,7 @@ class Annotation
      * @param $name
      * @return mixed
      */
-    public function getFunction($name)
+    public function getFunctionResult($name)
     {
         return isset($this->annotationFunctions[$name]) ? $this->annotationFunctions[$name] : false;
     }
