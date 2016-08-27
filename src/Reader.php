@@ -11,6 +11,7 @@ namespace FastD\Annotation;
 
 /**
  * Class Reader
+ *
  * @package FastD\Annotation
  */
 class Reader
@@ -23,15 +24,15 @@ class Reader
     /**
      * @var array
      */
-    protected $directives = [];
+    protected $functions = [];
 
     /**
      * Reader constructor.
-     * @param array $directives
+     * @param array $functions
      */
-    public function __construct(array $directives = [])
+    public function __construct(array $functions = [])
     {
-        $this->directives = $directives;
+        $this->setFunctions($functions);
     }
 
     /**
@@ -39,9 +40,20 @@ class Reader
      * @param $value
      * @return $this
      */
-    public function setDirective($name, $value)
+    public function setFunction($name, $value)
     {
-        $this->directives[$name] = $value;
+        $this->functions[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param array $functions
+     * @return $this
+     */
+    public function setFunctions(array $functions)
+    {
+        $this->functions = $functions;
 
         return $this;
     }
@@ -50,22 +62,30 @@ class Reader
      * @param $name
      * @return bool
      */
-    public function hasDirective($name)
+    public function hasFunction($name)
     {
-        return isset($this->directives[$name]);
+        return isset($this->functions[$name]);
     }
 
     /**
      * @param $name
      * @return bool|mixed
      */
-    public function getDirective($name)
+    public function getFunction($name)
     {
-        if (!$this->hasDirective($name)) {
+        if (!$this->hasFunction($name)) {
             return false;
         }
 
-        return $this->directives[$name];
+        return $this->functions[$name];
+    }
+
+    /**
+     * @return array
+     */
+    public function getFunctions()
+    {
+        return $this->functions;
     }
 
     /**
@@ -75,7 +95,7 @@ class Reader
     public function getAnnotations($class)
     {
         if (!isset($this->annotations[$class])) {
-            $this->annotations[$class] = new Annotation(new Parser($class), $this->directives);
+            $this->annotations[$class] = new Annotation(new Parser($class), $this->functions);
         }
 
         return $this->annotations[$class];

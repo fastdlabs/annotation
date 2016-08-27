@@ -10,7 +10,7 @@
 
 namespace FastD\Annotation;
 
-use FastD\Annotation\Exceptions\InvalidFunctionException;
+use RuntimeException;
 
 /**
  * Class Annotation
@@ -37,17 +37,19 @@ class Annotation
     /**
      * @var array
      */
-    protected $variables = [];
+    protected $annotationVariables = [];
 
     /**
      * @var array
      */
-    protected $functions = [];
+    protected $annotationFunctions = [];
+
+    protected $annotationFunctionResults = [];
 
     /**
      * @var array
      */
-    protected $directives = [];
+    protected $definitionFunctions = [];
 
     /**
      * @var int
@@ -56,32 +58,34 @@ class Annotation
 
     /**
      * Annotation constructor.
+     *
      * @param Parser $parser
-     * @param array $directives
+     * @param array $functions
      */
-    public function __construct(Parser $parser, array $directives = [])
+    public function __construct(Parser $parser, array $functions = [])
     {
-        $this->directives = $directives;
+        $this->definitionFunctions = $functions;
 
         $classAnnotations = $parser->getClassAnnotations();
 
         $this->methodAnnotations = $parser->getMethodAnnotations();
 
-        $this->parentAnnotations = $classAnnotations; array_pop($this->parentAnnotations);
+        $this->parentAnnotations = $classAnnotations;
+        array_pop($this->parentAnnotations);
 
         $this->position = count($this->parentAnnotations);
 
         foreach ($classAnnotations as $classAnnotation) {
-            $this->classAnnotations['functions'] = $this->mergeDirective($this->classAnnotations['functions'] ?? [], $classAnnotation);
+            $this->classAnnotations['functions'] = $this->mergeAnnotationFunctions($this->classAnnotations['functions'] ?? [], $classAnnotation);
             $this->mergeVariables($classAnnotation);
         }
 
         foreach ($this->methodAnnotations as $key => $methodAnnotation) {
-            $this->methodAnnotations[$key]['functions'] = $this->mergeDirective($this->classAnnotations['functions'], $methodAnnotation);
+            $this->methodAnnotations[$key]['functions'] = $this->mergeAnnotationFunctions($this->classAnnotations['functions'], $methodAnnotation);
         }
 
-        $this->variables = $this->classAnnotations['variables'] ?? [];
-        $this->functions = $this->classAnnotations['functions'] ?? [];
+        $this->annotationVariables = isset($this->classAnnotations['variables']) ? $this->classAnnotations['variables'] : [];
+        $this->annotationFunctions = isset($this->classAnnotations['functions']) ? $this->classAnnotations['functions'] : [];
     }
 
     /**
@@ -96,25 +100,27 @@ class Annotation
         }
     }
 
+    /**
+     * @return array
+     */
     public function getMethodAnnotations()
     {
         return $this->methodAnnotations;
     }
+
     /**
-     * @param $directives
+     * @param $functions
      * @param $parent
      * @return array
      */
-    protected function mergeDirective($directives, $parent)
+    protected function mergeAnnotationFunctions(array $functions, $parent)
     {
-        $functions = $directives;
-
         if (isset($parent['functions'])) {
             foreach ($parent['functions'] as $name => $parameters) {
-                if (isset($this->directives[$name]) && is_callable($this->directives[$name])) {
+                if (isset($this->definitionFunctions[$name]) && is_callable($this->definitionFunctions[$name])) {
                     $previous = $functions[$name] ?? [];
                     foreach ($parameters as $index => $value) {
-                        $parameters[$index] = $this->directives[$name]($previous[$index] ?? '', $index, $value);
+                        $parameters[$index] = $this->definitionFunctions[$name]($previous[$index] ?? '', $index, $value);
                     }
                 }
                 $functions[$name] = $parameters;
@@ -128,31 +134,44 @@ class Annotation
      * @param $name
      * @return bool|mixed
      */
-    public function get($name)
+    public function getVariable($name)
     {
-        return $this->variables[$name] ?? false;
+        return isset($this->annotationVariables[$name]) ? $this->annotationVariables[$name] : false;
     }
 
     /**
      * @param $name
-     * @param callable|null $callable
-     * @return bool|mixed
-     * @throws InvalidFunctionException
+     * @return mixed
      */
-    public function getFunction($name, callable $callable = null)
+    public function getFunction($name)
     {
-        if (!isset($this->functions[$name])) {
-            return false;
+        return isset($this->annotationFunctions[$name]) ? $this->annotationFunctions[$name] : false;
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @throws RuntimeException
+     */
+    public function callFunction($name, array $arguments = [])
+    {
+        if (false === ($parameters = $this->getFunction($name))) {
+            throw new RuntimeException(sprintf('Annotation function "%s" is undefined.', $name));
         }
 
-        $parameters = $this->functions[$name];
+        if (!empty($arguments)) {
+            $parameters = $arguments;
+        }
+
+        $callable = isset($this->definitionFunctions[$name]) ? $this->definitionFunctions[$name] : false;
+
+        if (false === $callable && !function_exists($name)) {
+            throw new RuntimeException(sprintf('Function "%s" is undefined.', $name));
+        }
 
         if (is_callable($callable)) {
             return call_user_func_array($callable, $parameters);
-        }
-
-        if (!function_exists($name)) {
-            throw new InvalidFunctionException($name);
         }
 
         return call_user_func_array($name, $parameters);
@@ -164,8 +183,8 @@ class Annotation
      */
     public function getMethod($method)
     {
-        $this->variables = $this->methodAnnotations[$method]['variables'] ?? [];
-        $this->functions = $this->methodAnnotations[$method]['functions'] ?? [];
+        $this->annotationVariables = isset($this->methodAnnotations[$method]['variables']) ? $this->methodAnnotations[$method]['variables'] : [];
+        $this->annotationFunctions = isset($this->methodAnnotations[$method]['functions']) ? $this->methodAnnotations[$method]['functions'] : [];
 
         return $this;
     }
@@ -178,8 +197,8 @@ class Annotation
         $this->position--;
 
         if (isset($this->parentAnnotations[$this->position])) {
-            $this->variables = $this->parentAnnotations[$this->position]['variables'] ?? [];
-            $this->functions = $this->parentAnnotations[$this->position]['functions'] ?? [];
+            $this->annotationVariables = isset($this->parentAnnotations[$this->position]['variables']) ? $this->parentAnnotations[$this->position]['variables'] : [];
+            $this->annotationFunctions = isset($this->parentAnnotations[$this->position]['functions']) ? $this->parentAnnotations[$this->position]['functions'] : [];
         }
 
         return $this;
