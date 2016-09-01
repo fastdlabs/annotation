@@ -20,37 +20,28 @@ class ReaderTest extends PHPUnit_Framework_TestCase
         include_once __DIR__ . '/AnnotationsClasses/IndexController.php';
     }
 
-    public function testAnnotationReader()
-    {
-//        $reader = new Reader();
-//
-//        $annotation = $reader->getAnnotations(ChildController::class);
-//
-//        $this->assertEquals('child', $annotation->getVariable('name'));
-//
-//        $this->assertEquals('base', $annotation->parent()->getVariable('name'));
-//
-//        $this->assertEquals('method', $annotation->getMethod('indexAction')->getVariable('name'));
-    }
-
     public function testDirectives()
     {
         include_once __DIR__ . '/functions.php';
 
         $reader = new Reader([
-            'route' => function ($previous, $index, $value) {
-                return $previous . $value;
+            'route' => function ($path) {
+
+            },
+            'directive' => function ($name) {
+                return $name;
             }
         ]);
 
         $annotation = $reader->getAnnotations(ChildController::class);
 
-        print_r($annotation->getMethodAnnotations());
-//        $this->assertEquals('/base/child', $routeResult);
+        $this->assertEquals([
+            'name' => 'indexAction',
+        ], $annotation->getMethodAnnotation('indexAction')['variables']);
 
-//        $routeResult = $annotation->getMethod('indexAction')->callFunction('route');
-
-//        $this->assertEquals('/base/child/index', $routeResult);
+        $this->assertEquals([
+            'route' => ['/base/child/index'],
+        ], $annotation->getMethodAnnotation('indexAction')['functions']);
     }
 }
 

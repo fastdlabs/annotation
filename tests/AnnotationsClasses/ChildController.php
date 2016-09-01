@@ -19,9 +19,16 @@
 class ChildController extends BaseController
 {
     /**
-     * @name method
+     * @name indexAction
      * @route("/index")
      */
     public function indexAction()
+    {}
+
+    /**
+     * @name returnAction
+     * @route("/return")
+     */
+    public function returnAction()
     {}
 }

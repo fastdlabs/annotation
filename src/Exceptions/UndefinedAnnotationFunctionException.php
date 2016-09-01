@@ -17,7 +17,7 @@ use Exception;
  *
  * @package FastD\Annotation\Exceptions
  */
-class InvalidFunctionException extends Exception
+class UndefinedAnnotationFunctionException extends Exception
 {
     /**
      * InvalidFunctionException constructor.
