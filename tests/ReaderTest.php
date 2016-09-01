@@ -45,8 +45,7 @@ class ReaderTest extends PHPUnit_Framework_TestCase
 
         $annotation = $reader->getAnnotations(ChildController::class);
 
-//        $routeResult = $annotation->callFunction('route');
-
+        print_r($annotation->getMethodAnnotations());
 //        $this->assertEquals('/base/child', $routeResult);
 
 //        $routeResult = $annotation->getMethod('indexAction')->callFunction('route');
