@@ -37,11 +37,35 @@ class ClassParser extends Parser
     }
 
     /**
+     * Recursive reflection.
+     *
+     * @param ReflectionClass $reflectionClass
+     * @return array
+     */
+    protected function extendsParent(ReflectionClass $reflectionClass)
+    {
+        array_unshift($this->classAnnotations, $this->parse($reflectionClass->getDocComment()));
+
+        if (false !== $reflectionClass->getParentClass()) {
+            $this->extendsParent($reflectionClass->getParentClass());
+        }
+    }
+
+    /**
      * @return array
      */
     public function getClassAnnotations()
     {
         return $this->classAnnotations;
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function getMethodAnnotation($name)
+    {
+        return isset($this->methodAnnotations[$name]) ? $this->methodAnnotations[$name] : false;
     }
 
     /**

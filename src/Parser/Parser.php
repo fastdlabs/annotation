@@ -50,19 +50,4 @@ class Parser implements ParseInterface
 
         return $annotations;
     }
-
-    /**
-     * Recursive reflection.
-     *
-     * @param ReflectionClass $reflectionClass
-     * @return array
-     */
-    protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
-    {
-        array_unshift($this->classAnnotations, $this->parse($reflectionClass->getDocComment()));
-
-        if (false !== $reflectionClass->getParentClass()) {
-            $this->recursiveReflectionParent($reflectionClass->getParentClass());
-        }
-    }
 }
