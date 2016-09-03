@@ -22,8 +22,6 @@ class ReaderTest extends PHPUnit_Framework_TestCase
 
     public function testDirectives()
     {
-        include_once __DIR__ . '/functions.php';
-
         $reader = new Reader([
             'route' => function ($path) {
 

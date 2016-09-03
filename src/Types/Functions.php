@@ -39,10 +39,23 @@ class Functions implements TypesInterface
             }
 
             foreach ($match[1] as $key => $value) {
-                $params[$value] = array_map(function ($v) {
-                    return trim($v);
-                }, explode(',',  str_replace('"', '', $match[2][$key])));
+                $info = explode(',', $match[2][$key]);
+                $args = [];
+                array_map(function ($v) use (&$args) {
+                    if (false !== strpos($v, '=')) {
+                        list($index, $item) = explode('=', $v);
+                        $json = json_decode($item, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $item = $json;
+                        }
+                        $args[trim($index)] = $item;
+                    } else {
+                        $args[] = trim(str_replace(['"', "'"], '', $v));
+                    }
+                }, $info);
+                $params[$value] = $args;
             }
+            unset($args);
         }
 
         return $params;
