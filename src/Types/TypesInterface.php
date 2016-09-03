@@ -9,20 +9,16 @@
 
 namespace FastD\Annotation\Types;
 
+use FastD\Annotation\Parser\ParseInterface;
+
 /**
  * Interface TypesInterface
  * @package FastD\Annotation\Types
  */
-interface TypesInterface
+interface TypesInterface extends ParseInterface
 {
     /**
      * @return string
      */
     public function syntax();
-
-    /**
-     * @param $docComment
-     * @return array
-     */
-    public function parse($docComment);
 }

@@ -7,7 +7,7 @@
  * @link      http://www.fast-d.cn/
  */
 
-use FastD\Annotation\Parser;
+use FastD\Annotation\Parser\Parser;
 use FastD\Annotation\Types\Functions;
 use FastD\Annotation\Types\Variable;
 
@@ -15,11 +15,11 @@ class ParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        include_once __DIR__ . '/AnnotationsClasses/AnnotationDirective.php';
-        include_once __DIR__ . '/AnnotationsClasses/AnnotationObject.php';
-        include_once __DIR__ . '/AnnotationsClasses/BaseController.php';
-        include_once __DIR__ . '/AnnotationsClasses/ChildController.php';
-        include_once __DIR__ . '/AnnotationsClasses/IndexController.php';
+        include_once __DIR__ . '/../AnnotationsClasses/AnnotationDirective.php';
+        include_once __DIR__ . '/../AnnotationsClasses/AnnotationObject.php';
+        include_once __DIR__ . '/../AnnotationsClasses/BaseController.php';
+        include_once __DIR__ . '/../AnnotationsClasses/ChildController.php';
+        include_once __DIR__ . '/../AnnotationsClasses/IndexController.php';
     }
 
     public function testParseSyntax()

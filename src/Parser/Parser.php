@@ -1,6 +1,6 @@
 <?php
 
-namespace FastD\Annotation;
+namespace FastD\Annotation\Parser;
 
 use FastD\Annotation\Types\Functions;
 use FastD\Annotation\Types\Variable;
@@ -51,6 +51,11 @@ class Parser
         }
 
         unset($reflectionClass);
+    }
+
+    public function parse()
+    {
+
     }
 
     /**
