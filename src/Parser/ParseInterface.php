@@ -10,6 +10,11 @@
 
 namespace FastD\Annotation\Parser;
 
+/**
+ * Interface ParseInterface
+ *
+ * @package FastD\Annotation\Parser
+ */
 interface ParseInterface
 {
     /**

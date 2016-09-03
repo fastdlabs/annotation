@@ -79,4 +79,32 @@ DOC;
     {
         $this->assertEmpty($this->parser->parse(''));
     }
+
+    public function testDirectiveParseSyntax()
+    {
+        $parse = new Functions();
+
+        $annotation = $parse->parse(<<<EOF
+/**
+ * Class IndexController
+ * @package Tests\AnnotationsClasses
+ *
+ * @name foo
+ * @json ["abc"]
+ * @directive(a, b)
+ * @directive2(a, b)
+ * @Tests\AnnotationsClasses\AnnotationObject -> test()
+ */
+EOF
+        );
+
+        $this->assertEquals([
+            'directive' => [
+                'a', 'b'
+            ],
+            'directive2' => [
+                'a', 'b'
+            ],
+        ], $annotation);
+    }
 }

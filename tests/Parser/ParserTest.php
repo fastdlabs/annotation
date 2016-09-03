@@ -8,139 +8,29 @@
  */
 
 use FastD\Annotation\Parser\Parser;
-use FastD\Annotation\Types\Functions;
-use FastD\Annotation\Types\Variable;
 
 class ParserTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        include_once __DIR__ . '/../AnnotationsClasses/AnnotationDirective.php';
-        include_once __DIR__ . '/../AnnotationsClasses/AnnotationObject.php';
-        include_once __DIR__ . '/../AnnotationsClasses/BaseController.php';
-        include_once __DIR__ . '/../AnnotationsClasses/ChildController.php';
-        include_once __DIR__ . '/../AnnotationsClasses/IndexController.php';
-    }
-
     public function testParseSyntax()
     {
-        $parser = new Parser(IndexController::class);
+        $parser = new Parser();
 
         $this->assertEquals([
-            [
-                'variables' => [
-                    'package' => 'Tests\AnnotationsClasses',
-                    'name' => 'foo',
-                    'json' => [
-                        'abc',
-                    ],
-                ],
-                'functions' => [
-                    'directive' => [
-                        'test'
-                    ],
-                    'route' => [
-                        '/'
-                    ]
-                ]
+            'variables' => [
+                'name' => 'indexAction',
             ],
-        ], $parser->getClassAnnotations());
-    }
-
-    public function testHadParentParseSyntax()
-    {
-        $parser = new Parser(ChildController::class);
-
-        $this->assertEquals([
-            [
-                'variables' => [
-                    'package' => 'Tests\AnnotationsClasses',
-                    'name' => 'base',
-                    'json' => [
-                        'abc',
-                    ],
-                ],
-                'functions' => [
-                    'directive' => [
-                        'test'
-                    ],
-                    'route' => [
-                        '/base'
-                    ]
+            'functions' => [
+                'route' => [
+                    '/index'
                 ]
-            ],
-            [
-                'variables' => [
-                    'package' => 'Tests\AnnotationsClasses',
-                    'name' => 'child',
-                    'json' => [
-                        'abc',
-                    ],
-                ],
-                'functions' => [
-                    'directive' => [
-                        '/test'
-                    ],
-                    'route' => [
-                        '/child'
-                    ]
-                ]
-            ],
-        ], $parser->getClassAnnotations());
-    }
-
-    public function testVariableParseSyntax()
-    {
-        $parse = new Variable();
-
-        $annotation = $parse->parse(<<<EOF
-/**
- * Class IndexController
- * @package Tests\AnnotationsClasses
- *
- * @name foo
- * @json ["abc"]
- * @directive("test")
- * @Tests\AnnotationsClasses\AnnotationObject -> test()
- */
-EOF
-);
-
-        $this->assertEquals([
-            'package' => 'Tests\AnnotationsClasses',
-            'name' => 'foo',
-            'json' => [
-                'abc'
             ]
-        ], $annotation);
-    }
-
-    public function testDirectiveParseSyntax()
-    {
-        $parse = new Functions();
-
-        $annotation = $parse->parse(<<<EOF
+        ], $parser->parse(<<<DOC
 /**
- * Class IndexController
- * @package Tests\AnnotationsClasses
- *
- * @name foo
- * @json ["abc"]
- * @directive(a, b)
- * @directive2(a, b)
- * @Tests\AnnotationsClasses\AnnotationObject -> test()
+ * @name indexAction
+ * @route("/index")
  */
-EOF
-);
-
-        $this->assertEquals([
-            'directive' => [
-                'a', 'b'
-            ],
-            'directive2' => [
-                'a', 'b'
-            ],
-        ], $annotation);
+DOC
+        ));
     }
 }
 

@@ -38,4 +38,50 @@ DOC;
     {
         $this->assertEmpty($this->parser->parse(''));
     }
+
+    public function testJsonVariables()
+    {
+        $docComment = <<<DOC
+/**
+ * @name janhuang
+ * @info {"name": "jan"}
+ */
+DOC;
+        ;
+
+        $variables = $this->parser->parse($docComment);
+
+        $this->assertEquals([
+            'name' => 'janhuang',
+            'info' => [
+                'name' => 'jan'
+            ]
+        ], $variables);
+    }
+
+    public function testVariableParseSyntax()
+    {
+        $parse = new Variable();
+
+        $annotation = $parse->parse(<<<EOF
+/**
+ * Class IndexController
+ * @package Tests\AnnotationsClasses
+ *
+ * @name foo
+ * @json ["abc"]
+ * @directive("test")
+ * @Tests\AnnotationsClasses\AnnotationObject -> test()
+ */
+EOF
+        );
+
+        $this->assertEquals([
+            'package' => 'Tests\AnnotationsClasses',
+            'name' => 'foo',
+            'json' => [
+                'abc'
+            ]
+        ], $annotation);
+    }
 }

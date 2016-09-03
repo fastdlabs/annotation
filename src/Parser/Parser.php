@@ -12,7 +12,7 @@ use ReflectionMethod;
  *
  * @package FastD\Annotation
  */
-class Parser
+class Parser implements ParseInterface
 {
     /**
      * @var array
@@ -33,51 +33,10 @@ class Parser
     protected $methodAnnotations = [];
 
     /**
-     * Parser constructor.
-     * @param $class
-     */
-    public function __construct($class)
-    {
-        $reflectionClass = new ReflectionClass($class);
-
-        $this->recursiveReflectionParent($reflectionClass);
-
-        foreach ($reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            if (false !== $method->getDeclaringClass() && $method->getDeclaringClass()->getName() == $reflectionClass->getName()) {
-                $this->methodAnnotations[$method->getName()] = $this->parseDocComment($method->getDocComment());
-            }
-
-            unset($method);
-        }
-
-        unset($reflectionClass);
-    }
-
-    public function parse()
-    {
-
-    }
-
-    /**
-     * Recursive reflection.
-     *
-     * @param ReflectionClass $reflectionClass
-     * @return array
-     */
-    protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
-    {
-        array_unshift($this->classAnnotations, $this->parseDocComment($reflectionClass->getDocComment()));
-
-        if (false !== $reflectionClass->getParentClass()) {
-            $this->recursiveReflectionParent($reflectionClass->getParentClass());
-        }
-    }
-
-    /**
      * @param $docComment
      * @return array
      */
-    public function parseDocComment($docComment)
+    public function parse($docComment)
     {
         if (!$docComment) {
             return [];
@@ -93,18 +52,17 @@ class Parser
     }
 
     /**
+     * Recursive reflection.
+     *
+     * @param ReflectionClass $reflectionClass
      * @return array
      */
-    public function getClassAnnotations()
+    protected function recursiveReflectionParent(ReflectionClass $reflectionClass)
     {
-        return $this->classAnnotations;
-    }
+        array_unshift($this->classAnnotations, $this->parse($reflectionClass->getDocComment()));
 
-    /**
-     * @return array
-     */
-    public function getMethodAnnotations()
-    {
-        return $this->methodAnnotations;
+        if (false !== $reflectionClass->getParentClass()) {
+            $this->recursiveReflectionParent($reflectionClass->getParentClass());
+        }
     }
 }
