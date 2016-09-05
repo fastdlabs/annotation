@@ -45,7 +45,7 @@ class ClassParser extends Parser
 
         $this->extendsParents($reflectionClass);
 
-        $this->mergeClassAnnotation();
+        $this->mergeClassAnnotations();
 
         foreach ($reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if (false !== $method->getDeclaringClass() && $method->getDeclaringClass()->getName() == $reflectionClass->getName()) {
@@ -54,6 +54,8 @@ class ClassParser extends Parser
 
             unset($method);
         }
+
+        $this->mergeMethodAnnotations();
 
         unset($reflectionClass);
     }
@@ -93,7 +95,13 @@ class ClassParser extends Parser
         foreach ($functions as $name => $parameters) {
             $previous = isset($this->classAnnotations['functions'][$name]) ? $this->classAnnotations['functions'][$name] : [];
             foreach ($parameters as $index => $value) {
-                $parameters[$index] = (isset($previous[$index]) ? $previous[$index] : '') . $value;
+                if (isset($previous[$index])) {
+                    if (is_array($value)) {
+                        $parameters[$index] = array_merge($previous[$index], $value);
+                    } else {
+                        $parameters[$index] = $previous[$index] . $value;
+                    }
+                }
             }
             $this->classAnnotations['functions'][$name] = $parameters;
         }
@@ -102,17 +110,21 @@ class ClassParser extends Parser
     /**
      * @return void
      */
-    protected function mergeClassAnnotation()
+    protected function mergeClassAnnotations()
     {
-        $position = count($this->parentAnnotations);
-
         foreach ($this->parentAnnotations as $classAnnotation) {
             $this->mergeFunctions($classAnnotation['functions']);
             $this->mergeVariables($classAnnotation['variables']);
         }
-        return;
+    }
+
+    /**
+     * @return void
+     */
+    protected function mergeMethodAnnotations()
+    {
         foreach ($this->methodAnnotations as $key => $methodAnnotation) {
-            $functions = isset($methodAnnotation['functions']) ? $methodAnnotation['functions'] : [];
+            $functions = $methodAnnotation['functions'];
             foreach ($functions as $name => $params) {
                 if (isset($this->classAnnotations['functions'][$name])) {
                     foreach ($params as $index => $value) {
