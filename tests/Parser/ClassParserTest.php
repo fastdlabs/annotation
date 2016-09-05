@@ -32,11 +32,67 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
      *
      * @route("/index")
      */
-    public function testClassAnnotation()
+    public function testParentsAnnotation()
     {
         $parser = new ClassParser(IndexController::class);
 
-        $annotations = $parser->getClassAnnotations();
-        print_r($annotations);
+        $annotations = $parser->getParentAnnotations();
+
+        $this->assertEquals([
+            [
+                'functions' => [
+                    'directive' => ['test'],
+                    'route' => ['/']
+                ],
+                'variables' => [
+                    'package' => 'Tests\AnnotationsClasses',
+                    'name' => 'foo',
+                    'json' => ['abc']
+                ]
+            ]
+        ], $annotations);
+
+        /**
+         * Class ChildController
+         * @package Tests\AnnotationsClasses
+         *
+         * @name child
+         * @json ["abc"]
+         * @directive("/test")
+         * @route("/child")
+         */
+        $parser = new ClassParser(ChildController::class);
+
+        $annotations = $parser->getParentAnnotations();
+
+        $this->assertEquals([
+            [
+                'functions' => [
+                    'directive' => ['test'],
+                    'route' => ['/base']
+                ],
+                'variables' => [
+                    'package' => 'Tests\AnnotationsClasses',
+                    'name' => 'base',
+                    'json' => ['abc']
+                ]
+            ],
+            [
+                'functions' => [
+                    'directive' => ['test'],
+                    'route' => ['/child']
+                ],
+                'variables' => [
+                    'package' => 'Tests\AnnotationsClasses',
+                    'name' => 'child',
+                    'json' => ['abc']
+                ]
+            ]
+        ], $annotations);
+    }
+
+    public function testEmptyParentsAnnotation()
+    {
+
     }
 }

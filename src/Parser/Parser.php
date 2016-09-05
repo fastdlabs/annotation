@@ -23,16 +23,6 @@ class Parser implements ParseInterface
     ];
 
     /**
-     * @var array
-     */
-    protected $classAnnotations = [];
-
-    /**
-     * @var array
-     */
-    protected $methodAnnotations = [];
-
-    /**
      * @param $docComment
      * @return array
      */

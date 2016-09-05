@@ -26,6 +26,16 @@ class ClassParser extends Parser
     protected $parents = [];
 
     /**
+     * @var array
+     */
+    protected $classAnnotations = [];
+
+    /**
+     * @var array
+     */
+    protected $methodAnnotations = [];
+
+    /**
      * Parser constructor.
      * @param $class
      */
@@ -61,6 +71,9 @@ class ClassParser extends Parser
         }
     }
 
+    /**
+     * @return void
+     */
     protected function mergeAnnotation()
     {
         $classAnnotations = $parser->getClassAnnotations();
@@ -100,7 +113,7 @@ class ClassParser extends Parser
     /**
      * @return array
      */
-    public function getParents()
+    public function getParentAnnotations()
     {
         return $this->parents;
     }
@@ -114,19 +127,19 @@ class ClassParser extends Parser
     }
 
     /**
+     * @return array
+     */
+    public function getMethodAnnotations()
+    {
+        return $this->methodAnnotations;
+    }
+
+    /**
      * @param $name
      * @return bool
      */
     public function getMethodAnnotation($name)
     {
         return isset($this->methodAnnotations[$name]) ? $this->methodAnnotations[$name] : false;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMethodAnnotations()
-    {
-        return $this->methodAnnotations;
     }
 }

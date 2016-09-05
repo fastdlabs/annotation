@@ -13,7 +13,7 @@
  *
  * @name child
  * @json ["abc"]
- * @directive("/test")
+ * @directive("test")
  * @route("/child")
  */
 class ChildController extends BaseController
