@@ -108,5 +108,7 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
         $parser = new ClassParser(ChildController::class);
 
         $annotations = $parser->getClassAnnotations();
+
+        print_r($annotations);
     }
 }

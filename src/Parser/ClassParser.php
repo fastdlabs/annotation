@@ -91,12 +91,11 @@ class ClassParser extends Parser
     protected function mergeFunctions(array $functions)
     {
         foreach ($functions as $name => $parameters) {
-            $previous = $functions[$name] ?? [];
+            $previous = isset($this->classAnnotations['functions'][$name]) ? $this->classAnnotations['functions'][$name] : [];
             foreach ($parameters as $index => $value) {
-                $parameters[$index] = $previous[$index] . $value;
+                $parameters[$index] = (isset($previous[$index]) ? $previous[$index] : '') . $value;
             }
-            $functions[$name] = $parameters;
-            print_r($functions);
+            $this->classAnnotations['functions'][$name] = $parameters;
         }
     }
 
