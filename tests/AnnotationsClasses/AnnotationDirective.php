@@ -7,6 +7,9 @@
  * @link      http://www.fast-d.cn/
  */
 
+/**
+ * Class AnnotationDirective
+ */
 class AnnotationDirective
 {
 

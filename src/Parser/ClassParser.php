@@ -23,7 +23,7 @@ class ClassParser extends Parser
     /**
      * @var array
      */
-    protected $parents = [];
+    protected $parentAnnotations = [];
 
     /**
      * @var array
@@ -45,6 +45,8 @@ class ClassParser extends Parser
 
         $this->extendsParents($reflectionClass);
 
+        $this->mergeClassAnnotation();
+
         foreach ($reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if (false !== $method->getDeclaringClass() && $method->getDeclaringClass()->getName() == $reflectionClass->getName()) {
                 $this->methodAnnotations[$method->getName()] = $this->parse($method->getDocComment());
@@ -64,7 +66,7 @@ class ClassParser extends Parser
      */
     protected function extendsParents(ReflectionClass $reflectionClass)
     {
-        array_unshift($this->parents, $this->parse($reflectionClass->getDocComment()));
+        array_unshift($this->parentAnnotations, $this->parse($reflectionClass->getDocComment()));
 
         if (false !== $reflectionClass->getParentClass()) {
             $this->extendsParents($reflectionClass->getParentClass());
@@ -72,24 +74,44 @@ class ClassParser extends Parser
     }
 
     /**
+     * @param $variables
      * @return void
      */
-    protected function mergeAnnotation()
+    protected function mergeVariables(array $variables)
     {
-        $classAnnotations = $parser->getClassAnnotations();
-
-        $this->methodAnnotations = $parser->getMethodAnnotations();
-
-        $this->parentAnnotations = $classAnnotations;
-        array_pop($this->parentAnnotations);
-
-        $this->position = count($this->parentAnnotations);
-
-        foreach ($classAnnotations as $classAnnotation) {
-            $this->classAnnotations['functions'] = $this->mergeFunctions(isset($this->classAnnotations['functions']) ? $this->classAnnotations['functions'] : [], isset($classAnnotation['functions']) ? $classAnnotation['functions'] : []);
-            $this->mergeVariables($classAnnotation);
+        foreach ($variables as $name => $variable) {
+            $this->classAnnotations['variables'][$name] = $variable;
         }
+    }
 
+    /**
+     * @param $functions
+     * @return void
+     */
+    protected function mergeFunctions(array $functions)
+    {
+        foreach ($functions as $name => $parameters) {
+            $previous = $functions[$name] ?? [];
+            foreach ($parameters as $index => $value) {
+                $parameters[$index] = $previous[$index] . $value;
+            }
+            $functions[$name] = $parameters;
+            print_r($functions);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    protected function mergeClassAnnotation()
+    {
+        $position = count($this->parentAnnotations);
+
+        foreach ($this->parentAnnotations as $classAnnotation) {
+            $this->mergeFunctions($classAnnotation['functions']);
+            $this->mergeVariables($classAnnotation['variables']);
+        }
+        return;
         foreach ($this->methodAnnotations as $key => $methodAnnotation) {
             $functions = isset($methodAnnotation['functions']) ? $methodAnnotation['functions'] : [];
             foreach ($functions as $name => $params) {
@@ -115,7 +137,7 @@ class ClassParser extends Parser
      */
     public function getParentAnnotations()
     {
-        return $this->parents;
+        return $this->parentAnnotations;
     }
 
     /**

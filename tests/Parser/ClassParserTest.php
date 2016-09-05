@@ -93,6 +93,20 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
 
     public function testEmptyParentsAnnotation()
     {
+        $parser = new ClassParser(AnnotationDirective::class);
 
+        $this->assertEquals([
+            [
+                'functions' => [],
+                'variables' => [],
+            ]
+        ], $parser->getParentAnnotations());
+    }
+
+    public function testClassAnnotation()
+    {
+        $parser = new ClassParser(ChildController::class);
+
+        $annotations = $parser->getClassAnnotations();
     }
 }

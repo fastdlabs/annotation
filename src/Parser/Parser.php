@@ -28,7 +28,7 @@ class Parser implements ParseInterface
      */
     public function parse($docComment)
     {
-        if (!$docComment) {
+        if (empty($docComment)) {
             return [];
         }
 
