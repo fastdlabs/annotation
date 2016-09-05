@@ -38,15 +38,5 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
 
         $annotations = $parser->getClassAnnotations();
         print_r($annotations);
-        $this->assertEquals([
-            'variables' => [
-                'name' => 'foo',
-                'json' => ['abc'],
-            ],
-            'functions' => [
-                'directive' => ['test'],
-                'route' => ['/'],
-            ]
-        ], $annotations);
     }
 }
