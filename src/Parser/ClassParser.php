@@ -10,6 +10,7 @@
 
 namespace FastD\Annotation\Parser;
 
+use FastD\Annotation\Exceptions\UndefinedAnnotationFunctionException;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -169,10 +170,15 @@ class ClassParser extends Parser
 
     /**
      * @param $name
-     * @return bool
+     * @return mixed
+     * @throws UndefinedAnnotationFunctionException
      */
     public function getMethodAnnotation($name)
     {
-        return isset($this->methodAnnotations[$name]) ? $this->methodAnnotations[$name] : false;
+        if (isset($this->methodAnnotations[$name])) {
+            return $this->methodAnnotations[$name];
+        }
+
+        throw new UndefinedAnnotationFunctionException($name);
     }
 }
