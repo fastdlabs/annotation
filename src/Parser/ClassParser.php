@@ -22,6 +22,11 @@ use ReflectionMethod;
 class ClassParser extends Parser
 {
     /**
+     * @var string
+     */
+    protected $className;
+
+    /**
      * @var array
      */
     protected $parentAnnotations = [];
@@ -43,6 +48,8 @@ class ClassParser extends Parser
     public function __construct($class)
     {
         $reflectionClass = new ReflectionClass($class);
+
+        $this->className = $reflectionClass->getName();
 
         $this->extendsParents($reflectionClass);
 
@@ -142,9 +149,14 @@ class ClassParser extends Parser
                             }
                         }
                     }
-                    $functions[$name] = $params;
+                    $functions[$name] = [
+                        'class' => $this->className,
+                        'method' => $key,
+                        'params' => $params,
+                    ];
                 }
             }
+
             $this->methodAnnotations[$key]['functions'] = $functions;
         }
     }

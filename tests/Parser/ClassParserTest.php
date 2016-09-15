@@ -24,7 +24,8 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
 
     /**
      * Class IndexController
-     * @package Tests\AnnotationsClasses
+     *
+     * @package                                   Tests\AnnotationsClasses
      *
      * @name foo
      * @json ["abc"]
@@ -43,8 +44,20 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([
             [
                 'functions' => [
-                    'directive' => ['test'],
-                    'route' => ['/']
+                    'directive' => [
+                        'test'
+//                        'class' => IndexController::class,
+//                        'method' => 'indexAction',
+//                        'params' => [
+//                            'test'
+//                        ]
+                    ],
+                    'route' => [
+                        '/'
+//                        'class' => IndexController::class,
+//                        'method' => 'indexAction',
+//                        'params' => ['/']
+                    ]
                 ],
                 'variables' => [
                     'package' => 'Tests\AnnotationsClasses',
@@ -56,6 +69,7 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
 
         /**
          * Class ChildController
+         *
          * @package Tests\AnnotationsClasses
          *
          * @name child
@@ -70,8 +84,19 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([
             [
                 'functions' => [
-                    'directive' => ['test'],
-                    'route' => ['/base']
+                    'directive' => [
+                        'test'
+//                        'class' => ChildController::class,
+//                        'method' => '',
+//                        'params' => ['test']
+
+                    ],
+                    'route' => [
+                        '/base'
+//                        'class' => ChildController::class,
+//                        'method' => '',
+//                        'params' => ['/base']
+                    ]
                 ],
                 'variables' => [
                     'package' => 'Tests\AnnotationsClasses',
@@ -155,10 +180,14 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($annotation, [
             'functions' => [
                 'test' => [
-                    'info' => [
-                        'name' => 'jan',
-                        'age' => 18,
-                        'height' => 180
+                    'class' => AnnotationArrayExtends::class,
+                    'method' => 'testAction',
+                    'params' => [
+                        'info' => [
+                            'name' => 'jan',
+                            'age' => 18,
+                            'height' => 180
+                        ]
                     ]
                 ]
             ],
@@ -176,7 +205,11 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
             'indexAction' => [
                 'functions' => [
                     'route' => [
-                        '/base/child/index'
+                        'class' => ChildController::class,
+                        'method' => 'indexAction',
+                        'params' => [
+                            '/base/child/index'
+                        ]
                     ],
                 ],
                 'variables' => [
@@ -186,7 +219,11 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
             'returnAction' => [
                 'functions' => [
                     'route' => [
-                        '/base/child/return'
+                        'class' => ChildController::class,
+                        'method' => 'returnAction',
+                        'params' => [
+                            '/base/child/return'
+                        ]
                     ],
                 ],
                 'variables' => [
