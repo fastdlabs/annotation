@@ -114,8 +114,13 @@ class ClassParser extends Parser
     protected function mergeClassAnnotations()
     {
         foreach ($this->parentAnnotations as $classAnnotation) {
-            $this->mergeFunctions($classAnnotation['functions']);
-            $this->mergeVariables($classAnnotation['variables']);
+            if (isset($classAnnotation['functions'])) {
+                $this->mergeFunctions($classAnnotation['functions']);
+            }
+
+            if (isset($classAnnotation['variables'])) {
+                $this->mergeVariables($classAnnotation['variables']);
+            }
         }
     }
 
