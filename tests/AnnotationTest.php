@@ -19,9 +19,9 @@ class AnnotationTest extends PHPUnit_Framework_TestCase
      */
     public function testUndefinedAnnotationClassFunctions()
     {
-        $annoatation = new Annotation(ChildController::class);
+        $annotation = new Annotation(ChildController::class);
 
-        $annoatation->executeFunctions([]);
+        $annotation->executeFunctions([]);
     }
 
     public function testHasAnnotationClassFunctions()
