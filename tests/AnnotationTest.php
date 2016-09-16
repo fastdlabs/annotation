@@ -28,19 +28,19 @@ class AnnotationTest extends PHPUnit_Framework_TestCase
     {
         $phpunit = $this;
 
-        $this->expectOutputString(sprintf(<<<EOF
-Class: ChildController
-Method: indexAction
-Params: %s
-EOF
-            , print_r(['/base/child/index'], true)));
-
-        $this->expectOutputString(sprintf(<<<EOF
-Class: ChildController
-Method: returnAction
-Params: %s
-EOF
-            , print_r(['/base/child/return'], true)));
+//        $this->expectOutputString(sprintf(<<<EOF
+//Class: ChildController
+//Method: indexAction
+//Params: %s
+//EOF
+//            , print_r(['/base/child/index'], true)));
+//
+//        $this->expectOutputString(sprintf(<<<EOF
+//Class: ChildController
+//Method: returnAction
+//Params: %s
+//EOF
+//            , print_r(['/base/child/return'], true)));
 
         $annotation = new Annotation(ChildController::class);
 
@@ -59,7 +59,9 @@ EOF
 //            'height' => 180
 //        ], true));
 
-        new Annotation(AnnotationArrayExtends::class, [
+        $annotation = new Annotation(AnnotationArrayExtends::class);
+
+        $annotation->run([
             'test' => function ($info) {
                 print_r($info);
             },
