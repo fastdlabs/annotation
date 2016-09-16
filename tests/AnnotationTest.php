@@ -21,16 +21,32 @@ class AnnotationTest extends PHPUnit_Framework_TestCase
     {
         $annotation = new Annotation(ChildController::class);
 
-        $annotation->executeFunctions([]);
+        $annotation->run([]);
     }
 
     public function testHasAnnotationClassFunctions()
     {
-//        $this->expectOutputString('/base/child/index' . PHP_EOL . '/base/child/return' . PHP_EOL);
+        $phpunit = $this;
 
-        new Annotation(ChildController::class, [
-            'route' => function ($path) {
-                echo $path . PHP_EOL;
+        $this->expectOutputString(sprintf(<<<EOF
+Class: ChildController
+Method: indexAction
+Params: %s
+EOF
+            , print_r(['/base/child/index'], true)));
+
+        $this->expectOutputString(sprintf(<<<EOF
+Class: ChildController
+Method: returnAction
+Params: %s
+EOF
+            , print_r(['/base/child/return'], true)));
+
+        $annotation = new Annotation(ChildController::class);
+
+        $annotation->run([
+            'route' => function ($class, $method, $params) use ($phpunit) {
+                echo sprintf("Class: %s \r\nMethod: %s \r\nParams: %s\r\n", $class, $method, print_r($params, true));
             },
         ]);
     }

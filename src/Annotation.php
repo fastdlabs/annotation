@@ -40,7 +40,7 @@ class Annotation implements Iterator
      * @param array $definition
      * @throws UndefinedAnnotationFunctionException
      */
-    public function executeFunctions(array $definition = [])
+    public function run(array $definition = [])
     {
         $methodAnnotations = $this->classParser->getMethodAnnotations();
 
