@@ -32,5 +32,73 @@ class ParserTest extends PHPUnit_Framework_TestCase
 DOC
         ));
     }
+
+    public function testVariablesGetting()
+    {
+        $parser = new Parser();
+
+        $parser->parse(<<<EOF
+/**
+ * @name indexAction
+ * @route("/index")
+ */
+EOF
+);
+        $this->assertEquals($parser->get('name'), 'indexAction');
+    }
+
+    public function testFunctionArgumentsGetting()
+    {
+        $parser = new Parser();
+
+        $parser->parse(<<<EOF
+/**
+ * @name indexAction
+ * @route("/index")
+ */
+EOF
+        );
+
+        $this->assertEquals(['/index'], $parser->getArgs('route'));
+    }
+
+    /**
+     * @expectedException \FastD\Annotation\Exceptions\UndefinedAnnotationFunctionException
+     */
+    public function testUndefinedFunctionsExecute()
+    {
+        $parser = new Parser();
+
+        $parser->parse(<<<EOF
+/**
+ * @name indexAction
+ * @route("/index")
+ */
+EOF
+        );
+
+        $parser->execute();
+    }
+
+    public function testDefinitionFunctionsExecute()
+    {
+        $parser = new Parser();
+
+        $parser->parse(<<<EOF
+/**
+ * @name indexAction
+ * @route("/index")
+ */
+EOF
+        );
+
+        $this->expectOutputString('/index');
+
+        $parser->execute([
+            'route' => function ($path) {
+                echo $path;
+            }
+        ]);
+    }
 }
 

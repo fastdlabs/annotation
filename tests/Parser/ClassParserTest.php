@@ -172,4 +172,22 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
             ]
         ], $annotations);
     }
+
+    public function testUndefinedFunctionExecute()
+    {
+        $this->expectOutputString(<<<EOF
+indexAction
+returnAction
+
+EOF
+);
+        $classParser = new ClassParser(ChildController::class);
+
+        $classParser->execute([
+            'route' => function ($class, $method, $args) {
+                echo $method . PHP_EOL;
+                return sprintf("Class: %s\r\nMethod: %s\r\nArgs: %s", $class, $method, print_r($args, true));
+            }
+        ]);
+    }
 }

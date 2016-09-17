@@ -271,4 +271,32 @@ class ClassParser extends Parser implements Iterator
     {
         reset($this->methodAnnotations);
     }
+
+    /**
+     * @param array $definition
+     * @return mixed
+     */
+    public function execute(array $definition = [])
+    {
+        foreach ($this->getMethodAnnotations() as $method => $annotation) {
+            foreach ($annotation['functions'] as $name => $arguments) {
+                $arguments = [
+                    'class' => $this->getClassName(),
+                    'method' => $method,
+                    'args' => $arguments,
+                ];
+                if (isset($definition[$name])) {
+                    call_user_func_array($definition[$name], $arguments);
+                    continue;
+                }
+
+                if (function_exists($name)) {
+                    call_user_func_array($name, $arguments);
+                    continue;
+                }
+
+                throw new UndefinedAnnotationFunctionException($name);
+            }
+        }
+    }
 }

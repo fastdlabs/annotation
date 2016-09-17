@@ -57,21 +57,37 @@ class Parser implements ParseInterface
         return $this->annotations['variables'][$name];
     }
 
+    public function getArgs($name)
+    {
+        if (!isset($this->annotations['functions'][$name])) {
+            throw new UndefinedAnnotationFunctionException($name);
+        }
+
+        return $this->annotations['functions'][$name];
+    }
+
     /**
+     * @param $definition
      * @return mixed
      */
-    public function execute()
+    public function execute(array $definition = [])
     {
         if (!isset($this->annotations['functions'])) {
             return [];
         }
 
         foreach ($this->annotations['functions'] as $name => $arguments) {
-            if (!function_exists($name)) {
-                throw new UndefinedAnnotationFunctionException($name);
+            if (isset($definition[$name])) {
+                call_user_func_array($definition[$name], $arguments);
+                continue;
             }
 
-            call_user_func_array($name, $arguments);
+            if (function_exists($name)) {
+                call_user_func_array($name, $arguments);
+                continue;
+            }
+
+            throw new UndefinedAnnotationFunctionException($name);
         }
     }
 }
