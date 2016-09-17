@@ -2,10 +2,10 @@
 
 namespace FastD\Annotation\Parser;
 
+use FastD\Annotation\Exceptions\UndefinedAnnotationFunctionException;
+use FastD\Annotation\Exceptions\UndefinedAnnotationVariableException;
 use FastD\Annotation\Types\Functions;
 use FastD\Annotation\Types\Variable;
-use ReflectionClass;
-use ReflectionMethod;
 
 /**
  * Class Annotator
@@ -14,6 +14,8 @@ use ReflectionMethod;
  */
 class Parser implements ParseInterface
 {
+    protected $annotations = [];
+
     /**
      * @var array
      */
@@ -36,8 +38,40 @@ class Parser implements ParseInterface
 
         foreach ($this->types as $name => $type) {
             $annotations[$name] = (new $type)->parse($docComment);
+            $this->annotations[$name] = $annotations[$name];
         }
 
         return $annotations;
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function get($name)
+    {
+        if (!isset($this->annotations['variables'][$name])) {
+            throw new UndefinedAnnotationVariableException($name);
+        }
+
+        return $this->annotations['variables'][$name];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function execute()
+    {
+        if (!isset($this->annotations['functions'])) {
+            return [];
+        }
+
+        foreach ($this->annotations['functions'] as $name => $arguments) {
+            if (!function_exists($name)) {
+                throw new UndefinedAnnotationFunctionException($name);
+            }
+
+            call_user_func_array($name, $arguments);
+        }
     }
 }

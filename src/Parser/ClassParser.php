@@ -11,6 +11,7 @@
 namespace FastD\Annotation\Parser;
 
 use FastD\Annotation\Exceptions\UndefinedAnnotationFunctionException;
+use Iterator;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -19,7 +20,7 @@ use ReflectionMethod;
  *
  * @package FastD\Annotation\Parser
  */
-class ClassParser extends Parser
+class ClassParser extends Parser implements Iterator
 {
     /**
      * @var string
@@ -43,6 +44,7 @@ class ClassParser extends Parser
 
     /**
      * Parser constructor.
+     *
      * @param $class
      */
     public function __construct($class)
@@ -69,6 +71,14 @@ class ClassParser extends Parser
     }
 
     /**
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
+
+    /**
      * Recursive reflection.
      *
      * @param ReflectionClass $reflectionClass
@@ -76,7 +86,11 @@ class ClassParser extends Parser
      */
     protected function extendsParents(ReflectionClass $reflectionClass)
     {
-        array_unshift($this->parentAnnotations, $this->parse($reflectionClass->getDocComment()));
+        $annotation = $this->parse($reflectionClass->getDocComment());
+
+        $annotation['class'] = $reflectionClass->getName();
+
+        array_unshift($this->parentAnnotations, $annotation);
 
         if (false !== $reflectionClass->getParentClass()) {
             $this->extendsParents($reflectionClass->getParentClass());
@@ -129,6 +143,8 @@ class ClassParser extends Parser
                 $this->mergeVariables($classAnnotation['variables']);
             }
         }
+
+        $this->classAnnotations['class'] = $this->className;
     }
 
     /**
@@ -149,11 +165,7 @@ class ClassParser extends Parser
                             }
                         }
                     }
-                    $functions[$name] = [
-                        'class' => $this->className,
-                        'method' => $key,
-                        'params' => $params,
-                    ];
+                    $functions[$name] = $params;
                 }
             }
 
@@ -197,5 +209,66 @@ class ClassParser extends Parser
         }
 
         throw new UndefinedAnnotationFunctionException($name);
+    }
+
+    /**
+     * Return the current element
+     *
+     * @link  http://php.net/manual/en/iterator.current.php
+     * @return mixed Can return any type.
+     * @since 5.0.0
+     */
+    public function current()
+    {
+        return current($this->methodAnnotations);
+    }
+
+    /**
+     * Move forward to next element
+     *
+     * @link  http://php.net/manual/en/iterator.next.php
+     * @return void Any returned value is ignored.
+     * @since 5.0.0
+     */
+    public function next()
+    {
+        next($this->methodAnnotations);
+    }
+
+    /**
+     * Return the key of the current element
+     *
+     * @link  http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     * @since 5.0.0
+     */
+    public function key()
+    {
+        return key($this->methodAnnotations);
+    }
+
+    /**
+     * Checks if current position is valid
+     *
+     * @link  http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     *        Returns true on success or false on failure.
+     * @since 5.0.0
+     */
+    public function valid()
+    {
+        return isset($this->methodAnnotations[$this->key()]);
+    }
+
+    /**
+     * Rewind the Iterator to the first element
+     *
+     * @link  http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     * @since 5.0.0
+     */
+    public function rewind()
+    {
+        reset($this->methodAnnotations);
     }
 }

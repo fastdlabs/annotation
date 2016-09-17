@@ -11,19 +11,19 @@
 namespace FastD\Annotation\Exceptions;
 
 /**
- * Class InvalidFunctionException
+ * Class UndefinedAnnotationVariableException
  *
  * @package FastD\Annotation\Exceptions
  */
-class UndefinedAnnotationFunctionException extends AnnotationException
+class UndefinedAnnotationVariableException extends AnnotationException
 {
     /**
-     * InvalidFunctionException constructor.
+     * UndefinedAnnotationVariableException constructor.
      *
      * @param string $name
      */
     public function __construct($name)
     {
-        parent::__construct(sprintf('Annotation function "%s" is undefined.', $name));
+        parent::__construct(sprintf('Annotation variable "%s" is undefined.', $name));
     }
 }

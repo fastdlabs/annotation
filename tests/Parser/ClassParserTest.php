@@ -41,93 +41,39 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
 
         $annotations = $parser->getParentAnnotations();
 
-        $this->assertEquals([
+        $this->assertEquals($annotations, [
             [
                 'functions' => [
                     'directive' => [
-                        'test'
-//                        'class' => IndexController::class,
-//                        'method' => 'indexAction',
-//                        'params' => [
-//                            'test'
-//                        ]
+                        'test',
                     ],
                     'route' => [
                         '/'
-//                        'class' => IndexController::class,
-//                        'method' => 'indexAction',
-//                        'params' => ['/']
                     ]
                 ],
                 'variables' => [
                     'package' => 'Tests\AnnotationsClasses',
                     'name' => 'foo',
-                    'json' => ['abc']
-                ]
-            ]
-        ], $annotations);
-
-        /**
-         * Class ChildController
-         *
-         * @package Tests\AnnotationsClasses
-         *
-         * @name child
-         * @json ["abc"]
-         * @directive("/test")
-         * @route("/child")
-         */
-        $parser = new ClassParser(ChildController::class);
-
-        $annotations = $parser->getParentAnnotations();
-
-        $this->assertEquals([
-            [
-                'functions' => [
-                    'directive' => [
-                        'test'
-//                        'class' => ChildController::class,
-//                        'method' => '',
-//                        'params' => ['test']
-
-                    ],
-                    'route' => [
-                        '/base'
-//                        'class' => ChildController::class,
-//                        'method' => '',
-//                        'params' => ['/base']
+                    'json' => [
+                        'abc'
                     ]
                 ],
-                'variables' => [
-                    'package' => 'Tests\AnnotationsClasses',
-                    'name' => 'base',
-                    'json' => ['abc']
-                ]
-            ],
-            [
-                'functions' => [
-                    'directive' => ['test'],
-                    'route' => ['/child']
-                ],
-                'variables' => [
-                    'package' => 'Tests\AnnotationsClasses',
-                    'name' => 'child',
-                    'json' => ['abc']
-                ]
+                'class' => 'IndexController'
             ]
-        ], $annotations);
+        ]);
     }
 
     public function testEmptyParentsAnnotation()
     {
         $parser = new ClassParser(AnnotationDirective::class);
 
-        $this->assertEquals([
+        $this->assertEquals($parser->getParentAnnotations(), [
             [
                 'functions' => [],
                 'variables' => [],
+                'class' => AnnotationDirective::class
             ]
-        ], $parser->getParentAnnotations());
+        ]);
     }
 
     public function testClassAnnotation()
@@ -139,11 +85,11 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([
             'functions' => [
                 'directive' => [
-                    'testtest'
+                    'testtest',
                 ],
                 'route' => [
                     '/base/child'
-                ],
+                ]
             ],
             'variables' => [
                 'package' => 'Tests\AnnotationsClasses',
@@ -151,7 +97,8 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
                 'json' => [
                     'abc'
                 ]
-            ]
+            ],
+            'class' => 'ChildController',
         ], $annotations);
     }
 
@@ -161,14 +108,17 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
 
         $annotation = $parser->getClassAnnotations();
 
-        $this->assertEquals(['functions' => [
-            'test' => [
-                'info' => [
-                    'name' => 'jan',
-                    'age' => 18
+        $this->assertEquals([
+            'functions' => [
+                'test' => [
+                    'info' => [
+                        'name' => 'jan',
+                        'age' => 18
+                    ]
                 ]
-            ]
-        ]], $annotation);
+            ],
+            'class' => AnnotationArrayExtends::class
+        ], $annotation);
     }
 
     public function testMethodArrayAnnotationMerge()
@@ -177,22 +127,18 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
 
         $annotation = $parser->getMethodAnnotation('testAction');
 
-        $this->assertEquals($annotation, [
+        $this->assertEquals([
             'functions' => [
                 'test' => [
-                    'class' => AnnotationArrayExtends::class,
-                    'method' => 'testAction',
-                    'params' => [
-                        'info' => [
-                            'name' => 'jan',
-                            'age' => 18,
-                            'height' => 180
-                        ]
+                    'info' => [
+                        'name' => 'jan',
+                        'age' => 18,
+                        'height' => 180
                     ]
                 ]
             ],
             'variables' => []
-        ]);
+        ], $annotation);
     }
 
     public function testMethodAnnotation()
@@ -201,35 +147,29 @@ class ClassParserTest extends PHPUnit_Framework_TestCase
 
         $annotations = $parser->getMethodAnnotations();
 
+        $this->assertEquals(ChildController::class, $parser->getClassName());
+
         $this->assertEquals([
             'indexAction' => [
                 'functions' => [
                     'route' => [
-                        'class' => ChildController::class,
-                        'method' => 'indexAction',
-                        'params' => [
-                            '/base/child/index'
-                        ]
-                    ],
+                        '/base/child/index'
+                    ]
                 ],
                 'variables' => [
-                    'name' => 'indexAction'
+                    'name' => 'indexAction',
                 ]
             ],
             'returnAction' => [
                 'functions' => [
                     'route' => [
-                        'class' => ChildController::class,
-                        'method' => 'returnAction',
-                        'params' => [
-                            '/base/child/return'
-                        ]
-                    ],
+                        '/base/child/return'
+                    ]
                 ],
                 'variables' => [
-                    'name' => 'returnAction'
+                    'name' => 'returnAction',
                 ]
-            ],
+            ]
         ], $annotations);
     }
 }

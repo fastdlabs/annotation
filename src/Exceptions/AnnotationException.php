@@ -8,15 +8,11 @@
  * @link      http://www.fast-d.cn/
  */
 
-namespace FastD\Annotation;
+namespace FastD\Annotation\Exceptions;
 
-use FastD\Annotation\Parser\ClassParser;
+use RuntimeException;
 
-/**
- * Class Annotation
- *
- * @package FastD\Annotation
- */
-class Annotation extends ClassParser
+class AnnotationException extends RuntimeException
 {
+
 }
