@@ -77,17 +77,7 @@ class Parser implements ParseInterface
         }
 
         foreach ($this->annotations['functions'] as $name => $arguments) {
-            if (isset($definition[$name])) {
-                call_user_func_array($definition[$name], $arguments);
-                continue;
-            }
-
-            if (function_exists($name)) {
-                call_user_func_array($name, $arguments);
-                continue;
-            }
-
-            throw new UndefinedAnnotationFunctionException($name);
+            if ( !call_user_func_array($definition[$name], $arguments) ) throw new UndefinedAnnotationFunctionException($name);
         }
     }
 }
