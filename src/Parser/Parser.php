@@ -4,6 +4,7 @@ namespace FastD\Annotation\Parser;
 
 use FastD\Annotation\Exceptions\UndefinedAnnotationFunctionException;
 use FastD\Annotation\Exceptions\UndefinedAnnotationVariableException;
+use FastD\Annotation\Interfaces\ParseInterface;
 use FastD\Annotation\Types\Functions;
 use FastD\Annotation\Types\Variable;
 

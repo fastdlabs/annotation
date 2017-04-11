@@ -12,7 +12,7 @@ use FastD\Annotation\Types\Functions;
 class FunctionsTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var \FastD\Annotation\Types\TypesInterface
+     * @var \FastD\Annotation\FastD\Interfaces\TypesInterface
      */
     protected $parser;
 

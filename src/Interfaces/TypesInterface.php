@@ -7,9 +7,9 @@
  * @link      http://www.fast-d.cn/
  */
 
-namespace FastD\Annotation\Types;
+namespace FastD\Annotation\Interfaces;
 
-use FastD\Annotation\Parser\ParseInterface;
+use FastD\Annotation\Interfaces\ParseInterface;
 
 /**
  * Interface TypesInterface

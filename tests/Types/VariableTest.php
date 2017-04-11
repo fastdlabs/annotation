@@ -12,7 +12,7 @@ use FastD\Annotation\Types\Variable;
 class VariableTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var \FastD\Annotation\Types\TypesInterface
+     * @var \FastD\Annotation\Interfaces\TypesInterface
      */
     protected $parser;
 
