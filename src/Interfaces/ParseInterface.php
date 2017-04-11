@@ -8,7 +8,7 @@
  * @link      http://www.fast-d.cn/
  */
 
-namespace FastD\Annotation\Parser;
+namespace FastD\Annotation\Interfaces;
 
 /**
  * Interface ParseInterface

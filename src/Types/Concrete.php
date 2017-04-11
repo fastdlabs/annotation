@@ -8,6 +8,7 @@
  */
 
 namespace FastD\Annotation\Types;
+use FastD\Annotation\Interfaces\TypesInterface;
 
 /**
  * Class Concrete
